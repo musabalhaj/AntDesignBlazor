@@ -1,0 +1,85 @@
+﻿@page "/editemployee/{id}"
+@inject IEmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+@inject IDepartmentService DepartmentService
+@inject ModalService _modalService
+
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem Href="/employees">Employees</BreadcrumbItem>
+        <BreadcrumbItem>Edit</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<hr />
+<Card Hoverable Title="Edit Employee" Loading="_loading">
+    <Form Model="@Employee"
+          OnFinish="HamdleValidSubmit"
+          LabelColSpan="4"
+          WrapperColSpan="16">
+        <FormItem Label="First Name">
+            <Input @bind-Value="@context.FirstName" />
+        </FormItem>
+        <FormItem Label="Last Name">
+            <Input @bind-Value="@context.LastName" />
+        </FormItem>
+        <FormItem Label="Email">
+            <Input @bind-Value="@context.Email" />
+        </FormItem>
+        <FormItem Label="Gender">
+            <EnumSelect TEnum="Gender" @bind-Value="@context.Gender" />
+        </FormItem>
+        <FormItem Label="Department">
+            <Select DataSource="@Departments"
+                    DefaultActiveFirstOption="false"
+                    ValueName="@nameof(Department.DepartmentId)"
+                    LabelName="@nameof(Department.DepartmentName)"
+                    @bind-Value="@context.DepartmentId"
+                    EnableSearch
+                    AllowClear>
+            </Select>
+        </FormItem>
+        <FormItem Label="Birth Date" Required Class="birthDate">
+            <InputDate @bind-Value="@context.DateOfBirth" />
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Update
+            </Button>
+        </FormItem>
+    </Form>
+</Card>
+
+@code{
+    [Parameter]
+    public string Id { get; set; }
+    public List<Department> Departments { get; set; } = new List<Department>();
+    public Department Department { get; set; } = new Department();
+    public Employee Employee { get; set; } = new Employee();
+    bool _loading;
+    protected async override Task OnInitializedAsync()
+    {
+        _loading = true;
+        Employee = await EmployeeService.GetEmployee(int.Parse(Id));
+        Departments = (await DepartmentService.GetDepartments()).ToList();
+        _loading = false;
+    }
+
+    protected async Task HamdleValidSubmit()
+    {
+        var result = await EmployeeService.UpdateEmployee(Employee);
+        if (result != null)
+        {
+            HandleSuccess();
+        }
+    }
+
+    private void HandleSuccess()
+    {
+        _modalService.Success(new ConfirmOptions()
+        {
+            Content = "Employee Updated Successfully."
+        });
+        NavigationManager.NavigateTo("/employees");
+    }
+}

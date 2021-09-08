@@ -1,0 +1,58 @@
+﻿@page "/createdepartment"
+@inject IDepartmentService DepartmentService
+@inject NavigationManager NavigationManager
+@inject ModalService _modalService
+
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem Href="/departments">Departments</BreadcrumbItem>
+        <BreadcrumbItem>New</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<hr />
+
+<Card Hoverable Title="New Department">
+
+    <Form Model="@Department"
+          OnFinish="HamdleValidSubmit"
+          LabelColSpan="4"
+          WrapperColSpan="16">
+        <ValidationSummary />
+        <FormItem Label="Department Name">
+            <Input @bind-Value="@context.DepartmentName" />
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Create
+            </Button>
+        </FormItem>
+    </Form>
+
+</Card>
+
+
+@code{
+
+    public Department Department { get; set; } = new Department();
+    protected async Task HamdleValidSubmit()
+    {
+        var result = await DepartmentService.CreateDepartment(Department);
+        if (result != null)
+        {
+            HandleSuccess();
+        }
+    }
+
+
+    private void HandleSuccess()
+    {
+        _modalService.Success(new ConfirmOptions()
+        {
+            Content = "Department Added Successfully."
+        });
+        NavigationManager.NavigateTo("/departments");
+    }
+}
+
+

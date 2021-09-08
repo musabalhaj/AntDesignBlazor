@@ -1,0 +1,83 @@
+﻿@page "/departments"
+@inject IDepartmentService DepartmentService
+@inject ModalService _modalService
+
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem>Departments</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<hr />
+
+<a class="btn btn-info btn-sm btn-flat mb-2" href="createdepartment">
+    <i class="oi oi-plus"></i> New Department
+</a>
+
+<Card Hoverable Title="Departments List">
+    <Table DataSource="Departments" PageSize="10" Loading="_loading">
+        <Column @bind-Field="@context.DepartmentName" Sortable></Column>
+        <ActionColumn Title="Action">
+            <Space>
+                <SpaceItem>
+                    <a class="btn btn-success btn-sm btn-flat" href="@($"editdepartment/{context.DepartmentId}")">
+                        <i class="oi oi-pencil"></i> Edit
+                    </a>
+                    <Button Danger OnClick="@(()=>{ _visible = true; _Id = context.DepartmentId; })">
+                        <i class="oi oi-trash"></i> Delete
+                    </Button>
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+    </Table>
+</Card>
+
+<Modal Title="@_title"
+       Visible="@_visible"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel"
+       DestroyOnClose="true"
+       OkType="danger">
+    Do you want to Delete This Department?
+</Modal>
+
+@code{
+
+    bool _loading;
+    public List<Department> Departments { get; set; } = new List<Department>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        Departments = (await DepartmentService.GetDepartments()).ToList();
+        _loading = false;
+    }
+
+    string _title = "Delete Confirmation";
+    bool _visible = false;
+    int _Id;
+
+    private async Task HandleOk(MouseEventArgs e)
+    {
+        await DepartmentService.DeleteDepartment(_Id);
+        Departments = (await DepartmentService.GetDepartments()).ToList();
+        _visible = false;
+        HandleSuccess();
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        _visible = false;
+    }
+
+    private void HandleSuccess()
+    {
+        _modalService.Success(new ConfirmOptions()
+        {
+            Content = "Department Deleted Successfully."
+        });
+    }
+
+}
+
+

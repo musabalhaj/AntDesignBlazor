@@ -1,0 +1,60 @@
+﻿@page "/editdepartment/{id}"
+@inject IDepartmentService DepartmentService
+@inject NavigationManager NavigationManager
+@inject ModalService _modalService
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem Href="/departments">Departments</BreadcrumbItem>
+        <BreadcrumbItem>Edit</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<hr />
+
+<Card Hoverable Title="Edit Department" Loading="_loading">
+    <Form Model="@Department"
+          OnFinish="HamdleValidSubmit"
+          LabelColSpan="4"
+          WrapperColSpan="16">
+        <ValidationSummary />
+        <FormItem Label="Department Name">
+            <Input @bind-Value="@context.DepartmentName" />
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Update
+            </Button>
+        </FormItem>
+    </Form>
+</Card>
+
+@code{
+    [Parameter]
+    public string Id { get; set; }
+    public Department Department { get; set; } = new Department();
+    bool _loading;
+    protected async override Task OnInitializedAsync()
+    {
+        _loading = true;
+        Department = await DepartmentService.GetDepartment(int.Parse(Id));
+        _loading = false;
+    }
+
+    protected async Task HamdleValidSubmit()
+    {
+        var result = await DepartmentService.UpdateDepartment(Department);
+        if (result != null)
+        {
+            HandleSuccess();
+        }
+    }
+
+    private void HandleSuccess()
+    {
+        _modalService.Success(new ConfirmOptions()
+        {
+            Content = "Department Updated Successfully."
+        });
+        NavigationManager.NavigateTo("/departments");
+    }
+}

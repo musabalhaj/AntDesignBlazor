@@ -1,0 +1,155 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #ececec !important;
+}
+
+a, .btn-link {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+.spinner {
+    border: 16px solid silver;
+    border-top: 16px solid #3a0647;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 700ms linear infinite;
+    top: 40%;
+    left: 45%;
+    position: absolute;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+.ant-table-thead > tr > th {
+    position: relative;
+    color: rgba(0,0,0,.85);
+    font-weight: 800 !important;
+    background: #3a0647 !important;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background .3s ease;
+    color: #FFF !important;
+}
+
+.ant-table-column-sorters > span {
+    color: #FFF !important;
+}
+
+.ant-pagination-item, .ant-pagination-item-link {
+    border-radius: 50% !important;
+    background: #17a2b8 !important;
+    color: #FFF !important;
+}
+
+.ant-table-column-sorter {
+    color: #FFF !important;
+}
+
+.ant-card-hoverable {
+    cursor: auto !important;
+}
+
+.list-group-item {
+    border: none !important;
+}
+
+.ant-input, .ant-select-selector {
+    border-left: 4px solid #3a0647 !important;
+    border-right: 4px solid #3a0647 !important;
+}
+
+.ant-form-item-control-input-content input {
+    width: -webkit-fill-available !important;
+}
+
+.birthDate input {
+    border-left: 4px solid #3a0647 !important;
+    border-right: 4px solid #3a0647 !important;
+}
+
+.ant-card {
+    border-top: 4px solid #3a0647 !important;
+    border-top-right-radius: 20px !important;
+    border-top-left-radius: 20px !important;
+}
+
+.ant-form-item-control-input-content {
+    display: grid !important;
+}
+
+.ant-modal-content {
+    margin: auto !important;
+}
+
+.ant-avatar-image {
+    margin-left: 90px !important;
+    width: 100px !important;
+    height: 100px !important;
+}
+
+.ant-btn-dangerous {
+    color: #fff !important;
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.ant-alert {
+    background-color: #b7eb8f !important;
+    border-left: 4px solid #3a0647 !important;
+    margin-bottom: 5px !important;
+}
+
+    .ant-alert .ant-alert-success {
+        background-color: #b7eb8f !important;
+        border: 1px solid #b7eb8f !important;
+    }
