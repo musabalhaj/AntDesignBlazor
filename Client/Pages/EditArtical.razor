@@ -1,48 +1,43 @@
-﻿@page "/editemployee/{id}"
-@inject IEmployeeService EmployeeService
+﻿@page "/editartical/{id}"
+@inject IArticalService ArticalService
 @inject NavigationManager NavigationManager
-@inject IDepartmentService DepartmentService
+@inject ICategoryService CategoryService
 @inject ModalService _modalService
 
 <div class="mb-2">
     <Breadcrumb>
         <BreadcrumbItem Href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem Href="/employees">Employees</BreadcrumbItem>
+        <BreadcrumbItem Href="/articals">Articals</BreadcrumbItem>
         <BreadcrumbItem>Edit</BreadcrumbItem>
     </Breadcrumb>
 </div>
 <hr />
-<Card Hoverable Title="Edit Employee" Loading="_loading">
-    <Form Model="@Employee"
-          OnFinish="HamdleValidSubmit"
+<Card Hoverable Title="Edit Artical" Loading="_loading">
+    <Form Model="@Artical"
+          OnFinish="HandleValidSubmit"
           Layout="vertical">
-        <FormItem Label="First Name">
-            <Input @bind-Value="@context.FirstName" />
+        <ValidationSummary />
+        <FormItem Label="Title">
+            <Input @bind-Value="@context.Title" />
         </FormItem>
-        <FormItem Label="Last Name">
-            <Input @bind-Value="@context.LastName" />
+        <FormItem Label="Artical">
+            <InputTextArea @bind-Value="@context.Body"  />
         </FormItem>
-        <FormItem Label="Email">
-            <Input @bind-Value="@context.Email" />
+        <FormItem Label="Author">
+            <Input @bind-Value="@context.Author" />
         </FormItem>
-        <FormItem Label="Gender">
-            <EnumSelect TEnum="Gender" @bind-Value="@context.Gender" />
-        </FormItem>
-        <FormItem Label="Department">
-            <Select DataSource="@Departments"
+        <FormItem Label="Category" Required>
+            <Select DataSource="@Categories"
                     DefaultActiveFirstOption="false"
-                    ValueName="@nameof(Department.DepartmentId)"
-                    LabelName="@nameof(Department.DepartmentName)"
-                    @bind-Value="@context.DepartmentId"
+                    ValueName="@nameof(Category.Id)"
+                    LabelName="@nameof(Category.Name)"
+                    @bind-Value="@context.CategoryId"
                     EnableSearch
                     AllowClear>
             </Select>
         </FormItem>
-        <FormItem Label="Birth Date" Required>
-            <DatePicker DefaultPickerValue="DateTime.Now" @bind-Value="@context.DateOfBirth" />
-        </FormItem>
-        <FormItem Label="Image" Required>
-            <InputFile OnChange="OnFileChange" /> <Avatar Src="@context.PhotoPath"></Avatar>
+        <FormItem Label="Image">
+            <InputFile OnChange="OnFileChange" /> <Avatar Src="@context.Image"></Avatar>
         </FormItem>
         <FormItem>
             <Button Type="@ButtonType.Primary" HtmlType="submit">
@@ -60,9 +55,9 @@
     public string Id { get; set; }
     [Parameter]
     public EventCallback<string> OnChange { get; set; }
-    public List<Department> Departments { get; set; } = new List<Department>();
-    public Department Department { get; set; } = new Department();
-    public Employee Employee { get; set; } = new Employee();
+    public List<Category> Categories { get; set; } = new List<Category>();
+    public Category Category { get; set; } = new Category();
+    public Artical Artical { get; set; } = new Artical();
     bool _loading;
 
     protected async override Task OnInitializedAsync()
@@ -70,8 +65,8 @@
         try
         {
             _loading = true;
-            Employee = await EmployeeService.GetEmployee(int.Parse(Id));
-            Departments = (await DepartmentService.GetDepartments()).ToList();
+            Artical = await ArticalService.GetArtical(int.Parse(Id));
+            Categories = (await CategoryService.GetCategories()).ToList();
             _loading = false;
         }
         catch (Exception ex)
@@ -89,15 +84,15 @@
         var buffer = new byte[resizeImage.Size];
         await resizeImage.OpenReadStream().ReadAsync(buffer);
         var imageData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-        Employee.PhotoPath = imageData;
-        await OnChange.InvokeAsync(Employee.PhotoPath);
+        Artical.Image = imageData;
+        await OnChange.InvokeAsync(Artical.Image);
     }
 
-    protected async Task HamdleValidSubmit()
+    protected async Task HandleValidSubmit()
     {
         try
         {
-            var result = await EmployeeService.UpdateEmployee(Employee);
+            var result = await ArticalService.UpdateArtical(Artical);
             if (result != null)
             {
                 HandleSuccess();
@@ -116,10 +111,10 @@
         _modalService.Success(new ConfirmOptions()
         {
             Title = "Success.",
-            Content = "Employee Updated Successfully.",
+            Content = "Artical Updated Successfully.",
             OnOk = OnOkClick
         });
-        NavigationManager.NavigateTo("/employees");
+        NavigationManager.NavigateTo("/articals");
     }
 
     private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>

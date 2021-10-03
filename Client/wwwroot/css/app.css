@@ -103,7 +103,7 @@ a, .btn-link {
     border: none !important;
 }
 
-.ant-input, .ant-select-selector {
+.ant-input, .ant-select-selector,textarea {
     border-left: 4px solid #3a0647 !important;
     border-right: 4px solid #3a0647 !important;
 }
@@ -112,12 +112,9 @@ a, .btn-link {
     width: -webkit-fill-available !important;
 }
 
-.birthDate input {
-    border-left: 4px solid #3a0647 !important;
-    border-right: 4px solid #3a0647 !important;
-}
-
 .ant-card {
+    border: 0px !important;
+    box-shadow: 0 2px 6px 0 hsla(0,0%,0%,0.2) !important;
     border-top: 4px solid #3a0647 !important;
     border-top-right-radius: 20px !important;
     border-top-left-radius: 20px !important;
@@ -129,6 +126,8 @@ a, .btn-link {
 
 .ant-modal-content {
     margin: auto !important;
+/*    border-left: 4px solid #52c41a !important;
+    border-right: 4px solid #52c41a !important;*/
 }
 
 .ant-avatar-image {
@@ -153,3 +152,10 @@ a, .btn-link {
         background-color: #b7eb8f !important;
         border: 1px solid #b7eb8f !important;
     }
+.ant-picker {
+    border-left: 4px solid #3a0647 !important;
+    border-right: 4px solid #3a0647 !important;
+}
+.ant-modal-footer .ant-btn-primary {
+    display: none !important;
+}

@@ -8,7 +8,7 @@
         <BreadcrumbItem>Departments</BreadcrumbItem>
     </Breadcrumb>
 </div>
-<hr />
+<Divider />
 
 <a class="btn btn-info btn-sm btn-flat mb-2" href="createdepartment">
     <i class="oi oi-plus"></i> New Department
@@ -42,15 +42,26 @@
 </Modal>
 
 @code{
+    [CascadingParameter]
+    public Error Error { get; set; }
 
     bool _loading;
     public List<Department> Departments { get; set; } = new List<Department>();
 
     protected override async Task OnInitializedAsync()
     {
-        _loading = true;
-        Departments = (await DepartmentService.GetDepartments()).ToList();
-        _loading = false;
+        try
+        {
+            _loading = true;
+            Departments = (await DepartmentService.GetDepartments()).ToList();
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
     }
 
     string _title = "Delete Confirmation";
@@ -59,10 +70,19 @@
 
     private async Task HandleOk(MouseEventArgs e)
     {
-        await DepartmentService.DeleteDepartment(_Id);
-        Departments = (await DepartmentService.GetDepartments()).ToList();
-        _visible = false;
-        HandleSuccess();
+        try
+        {
+            await DepartmentService.DeleteDepartment(_Id);
+            Departments = (await DepartmentService.GetDepartments()).ToList();
+            _visible = false;
+            HandleSuccess();
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
     }
 
     private void HandleCancel(MouseEventArgs e)
@@ -74,9 +94,16 @@
     {
         _modalService.Success(new ConfirmOptions()
         {
-            Content = "Department Deleted Successfully."
+            Title = "Success.",
+            Content = "Department Deleted Successfully.",
+            OnOk = OnOkClick
         });
     }
+
+    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
+    {
+        await Task.Delay(1000);
+    };
 
 }
 

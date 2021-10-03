@@ -27,11 +27,11 @@ namespace Project.Server.Controllers
             {
                 return Ok(await employeeRepository.GetEmployees());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Geting Data From The Database.");
+                    $"Error Geting Data From The Database. {ex}");
             }
         }
 
@@ -47,11 +47,11 @@ namespace Project.Server.Controllers
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Geting Data From The Database.");
+                    $"Error Geting Data From The Database. {ex}");
             }
         }
 
@@ -67,7 +67,7 @@ namespace Project.Server.Controllers
                 var emp = await employeeRepository.GetEmployeeByEmail(employee.Email);
                 if (emp != null)
                 {
-                    ModelState.AddModelError("Email", "Email Allready in use");
+                    ModelState.AddModelError(nameof(employee.Email), "Email Allready in use");
                     return BadRequest(ModelState);
                 }
                 var CreatedEmployee = await employeeRepository.AddEmployee(employee);
@@ -75,11 +75,11 @@ namespace Project.Server.Controllers
                 return CreatedAtAction(nameof(GetEmployee),
                                        new { id = CreatedEmployee.EmployeeId }, CreatedEmployee);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Adding Data To The Database.");
+                     $"Error Adding Data To The Database. {ex}");
             }
         }
 
@@ -97,11 +97,11 @@ namespace Project.Server.Controllers
 
                 return await employeeRepository.UpdateEmployee(employee);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Updating Data");
+                    $"Error Updating Data. {ex}");
             }
         }
 
@@ -117,11 +117,11 @@ namespace Project.Server.Controllers
                 }
                 return await employeeRepository.DeleteEmployee(id);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Deleting data");
+                    $"Error Deleting data. {ex}");
             }
         }
 
@@ -137,10 +137,10 @@ namespace Project.Server.Controllers
                 }
                 return NotFound();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                                    "Error Geting Data From The Database");
+                                    $"Error Geting Data From The Database. {ex}");
             }
         }
 

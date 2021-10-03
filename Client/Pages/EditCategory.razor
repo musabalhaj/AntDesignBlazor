@@ -1,23 +1,23 @@
-﻿@page "/editdepartment/{id}"
-@inject IDepartmentService DepartmentService
+﻿@page "/editcategory/{id}"
+@inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 @inject ModalService _modalService
 <div class="mb-2">
     <Breadcrumb>
         <BreadcrumbItem Href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem Href="/departments">Departments</BreadcrumbItem>
+        <BreadcrumbItem Href="/categories">Categories</BreadcrumbItem>
         <BreadcrumbItem>Edit</BreadcrumbItem>
     </Breadcrumb>
 </div>
 <hr />
 
-<Card Hoverable Title="Edit Department" Loading="_loading">
-    <Form Model="@Department"
+<Card Hoverable Title="Edit Category" Loading="_loading">
+    <Form Model="@Category"
           OnFinish="HamdleValidSubmit"
           Layout="vertical">
         <ValidationSummary />
-        <FormItem Label="Department Name">
-            <Input @bind-Value="@context.DepartmentName" />
+        <FormItem Label="Category Name">
+            <Input @bind-Value="@context.Name" />
         </FormItem>
         <FormItem>
             <Button Type="@ButtonType.Primary" HtmlType="submit">
@@ -33,7 +33,7 @@
 
     [Parameter]
     public string Id { get; set; }
-    public Department Department { get; set; } = new Department();
+    public Category Category { get; set; } = new Category();
     bool _loading;
 
     protected async override Task OnInitializedAsync()
@@ -41,7 +41,7 @@
         try
         {
             _loading = true;
-            Department = await DepartmentService.GetDepartment(int.Parse(Id));
+            Category = await CategoryService.GetCategory(int.Parse(Id));
             _loading = false;
         }
         catch (Exception ex)
@@ -56,7 +56,7 @@
     {
         try
         {
-            var result = await DepartmentService.UpdateDepartment(Department);
+            var result = await CategoryService.UpdateCategory(Category);
             if (result != null)
             {
                 HandleSuccess();
@@ -75,10 +75,10 @@
         _modalService.Success(new ConfirmOptions()
         {
             Title = "Success.",
-            Content = "Department Updated Successfully.",
+            Content = "Category Updated Successfully.",
             OnOk = OnOkClick
         });
-        NavigationManager.NavigateTo("/departments");
+        NavigationManager.NavigateTo("/categories");
     }
 
     private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>

@@ -1,0 +1,11 @@
+﻿@page "/error400"
+
+<Card>
+    <Result Status="warning"
+            Title="There are some problems with your operation."
+            Extra=extra />
+</Card>
+@code
+{
+    RenderFragment extra =@<a class="btn btn-primary" href="/">Back Home</a>;
+}

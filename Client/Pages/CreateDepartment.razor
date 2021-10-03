@@ -16,13 +16,12 @@
 
     <Form Model="@Department"
           OnFinish="HamdleValidSubmit"
-          LabelColSpan="4"
-          WrapperColSpan="16">
+          Layout="vertical">
         <ValidationSummary />
         <FormItem Label="Department Name">
             <Input @bind-Value="@context.DepartmentName" />
         </FormItem>
-        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+        <FormItem>
             <Button Type="@ButtonType.Primary" HtmlType="submit">
                 Create
             </Button>
@@ -33,15 +32,26 @@
 
 
 @code{
+    [CascadingParameter]
+    public Error Error { get; set; }
 
     public Department Department { get; set; } = new Department();
     protected async Task HamdleValidSubmit()
     {
-        var result = await DepartmentService.CreateDepartment(Department);
-        if (result != null)
+        try
         {
-            HandleSuccess();
+            var result = await DepartmentService.CreateDepartment(Department);
+            if (result != null)
+            {
+                HandleSuccess();
+            }
         }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
     }
 
 
@@ -49,10 +59,17 @@
     {
         _modalService.Success(new ConfirmOptions()
         {
-            Content = "Department Added Successfully."
+            Title = "Success.",
+            Content = "Department Added Successfully.",
+            OnOk = OnOkClick
         });
         NavigationManager.NavigateTo("/departments");
     }
+
+    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
+    {
+        await Task.Delay(1000);
+    };
 }
 
 

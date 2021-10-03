@@ -38,20 +38,29 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public Error Error { get; set; }
+
     [Parameter]
     public string Id { get; set; }
     public List<Department> Departments { get; set; } = new List<Department>();
     public Department Department { get; set; } = new Department();
     public Employee Employee { get; set; } = new Employee();
     bool _loading;
+
     protected async override Task OnInitializedAsync()
     {
+        try
+        {
+            _loading = true;
+            Employee = await EmployeeService.GetEmployee(int.Parse(Id));
+            Departments = (await DepartmentService.GetDepartments()).ToList();
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
 
-        _loading = true;
-        Employee = await EmployeeService.GetEmployee(int.Parse(Id));
-        Departments = (await DepartmentService.GetDepartments()).ToList();
-        _loading = false;
+            Error.ProcessError(ex);
+        }
     }
-
-
 }

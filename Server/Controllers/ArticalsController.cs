@@ -11,36 +11,35 @@ namespace Project.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DepartmentsController : ControllerBase
+    public class ArticalsController : ControllerBase
     {
-        private readonly IDepartmentRepository departmentRepository;
+        private readonly IArticalRepository articalRepository;
 
-        public DepartmentsController(IDepartmentRepository departmentRepository)
+        public ArticalsController(IArticalRepository articalRepository)
         {
-            this.departmentRepository = departmentRepository;
+            this.articalRepository = articalRepository;
         }
-
         [HttpGet]
-        public async Task<ActionResult> GetDepartments()
+        public async Task<ActionResult> GetArticals()
         {
             try
             {
-                return Ok(await departmentRepository.GetDepartments());
+                return Ok(await articalRepository.GetArticals());
             }
             catch (Exception ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Error Retrieving data from the database.{ex}");
+                    $"Error Retrieving data from the database. {ex}");
             }
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Department>> GetDepartment(int Id)
+        public async Task<ActionResult<Artical>> GetArtical(int Id)
         {
             try
             {
-                var result = await departmentRepository.GetDepartment(Id);
+                var result = await articalRepository.GetArtical(Id);
                 if (result == null)
                 {
                     return NotFound();
@@ -57,41 +56,41 @@ namespace Project.Server.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Department>> CreateDepartment(Department department)
+        public async Task<ActionResult<Artical>> CreateArtical(Artical artical)
         {
             try
             {
-                if (department == null)
+                if (artical == null)
                 {
                     return BadRequest();
                 }
-                var CreatedDepartment = await departmentRepository.AddDepartment(department);
+                var CreatedArtical = await articalRepository.AddArtical(artical);
 
-                return CreatedAtAction(nameof(GetDepartment),
-                                       new { id = CreatedDepartment.DepartmentId }, CreatedDepartment);
+                return CreatedAtAction(nameof(GetArtical),
+                                       new { id = CreatedArtical.Id }, CreatedArtical);
             }
             catch (Exception ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Error adding data to the database. {ex}" );
+                    $"Error adding data to the database. {ex}");
             }
         }
 
 
         [HttpPut]
-        public async Task<ActionResult<Department>> UpdateDepartment(Department department)
+        public async Task<ActionResult<Artical>> UpdateArtical(Artical artical)
         {
             try
             {
-                var departmentToUpdate = await departmentRepository.GetDepartment(department.DepartmentId);
+                var articalToUpdate = await articalRepository.GetArtical(artical.Id);
 
-                if (departmentToUpdate == null)
+                if (articalToUpdate == null)
                 {
-                    return NotFound($"Department with the Id = {department.DepartmentId} Not Found");
+                    return NotFound($"Artical with the Id = {artical.Id} Not Found");
                 }
 
-                return await departmentRepository.UpdateDepartment(department);
+                return await articalRepository.UpdateArtical(artical);
             }
             catch (Exception ex)
             {
@@ -103,16 +102,16 @@ namespace Project.Server.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<Department>> DeleteDepartment(int id)
+        public async Task<ActionResult<Artical>> DeleteArtical(int id)
         {
             try
             {
-                var departmentToDelete = await departmentRepository.GetDepartment(id);
-                if (departmentToDelete == null)
+                var articalToDelete = await articalRepository.GetArtical(id);
+                if (articalToDelete == null)
                 {
-                    return NotFound($"Department with the Id = {id} Not Found");
+                    return NotFound($"Artical with the Id = {id} Not Found");
                 }
-                return await departmentRepository.DeleteDepartment(id);
+                return await articalRepository.DeleteArtical(id);
             }
             catch (Exception ex)
             {

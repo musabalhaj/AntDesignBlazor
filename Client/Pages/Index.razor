@@ -1,5 +1,75 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<Result Status="error"
+        Title="Submission Failed"
+        SubTitle="Please check and modify the following information before resubmitting."
+        Extra=extra>
+    <div class="desc">
+        <Paragraph>
+            <Text Strong Style="font-size: 16px;">
+                The content you submitted has the following error:
+            </Text>
+        </Paragraph>
+        <Paragraph>
+            <Icon Type="close-circle" Theme="Outline" Class="site-result-demo-error-icon" /> Your account has been frozen
+            <a>Thaw immediately &gt;</a>
+        </Paragraph>
+        <Paragraph>
+            <Icon Type="close-circle" Theme="Outline" Class="site-result-demo-error-icon" /> Your account is not yet
+            eligible to apply <a>Apply Unlock &gt;</a>
+        </Paragraph>
+    </div>
+</Result>
 
-Welcome to your new app.
+@code {
+    RenderFragment extra =
+    @<Template>
+        <Button Type="primary">Go Console</Button>
+        <Button>Buy Again</Button>
+    </Template>
+    ;
+}
+<Result Status="500"
+        Title="500"
+        SubTitle="Sorry, something went wrong."
+        Extra="extra1" />
+
+@code
+{
+    RenderFragment extra1 =@<Button Type="primary">Back Home</Button>;
+}
+<Result Status="403"
+        Title="403"
+        SubTitle="Sorry, you are not authorized to access this page."
+        Extra="extra2" />
+
+@code
+{
+    RenderFragment extra2 =@<Button Type="primary">Back Home</Button>;
+}
+<Result Status="warning"
+        Title="There are some problems with your operation."
+        Extra=extra3 />
+@code
+{
+    RenderFragment extra3 =@<Button Type="primary">Go Console</Button>;
+}
+<Result Title="info Your operation has been executed"
+        Extra=extra4 />
+@code {
+
+    RenderFragment extra4 =
+    @<Button Type="primary">
+        Go Console
+    </Button>;
+
+}
+<Result Status="success"
+        Title="Successfully Purchased Cloud Server ECS!"
+        SubTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait.">
+    <Extra>
+        <Button Type="primary">Go Console</Button>
+        <Button>Buy Again</Button>
+    </Extra>
+
+</Result>

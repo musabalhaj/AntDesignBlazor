@@ -1,11 +1,25 @@
-<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-    </Found>
-    <NotFound>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p>Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+<Error>
+
+    <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <Card>
+                    <Result Status="404"
+                            Title="404"
+                            SubTitle="Sorry, the page you visited does not exist."
+                            Extra="extra" />
+                </Card>
+            </LayoutView>
+        </NotFound>
+    </Router>
+
+</Error>
 <AntContainer />
+@code
+{
+    RenderFragment extra =@<a class="btn btn-primary" href="/">Back Home</a>;
+
+}

@@ -11,36 +11,35 @@ namespace Project.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DepartmentsController : ControllerBase
+    public class LogsController : ControllerBase
     {
-        private readonly IDepartmentRepository departmentRepository;
+        private readonly ILogRepository logRepository;
 
-        public DepartmentsController(IDepartmentRepository departmentRepository)
+        public LogsController(ILogRepository logRepository)
         {
-            this.departmentRepository = departmentRepository;
+            this.logRepository = logRepository;
         }
-
         [HttpGet]
-        public async Task<ActionResult> GetDepartments()
+        public async Task<ActionResult> GetLogs()
         {
             try
             {
-                return Ok(await departmentRepository.GetDepartments());
+                return Ok(await logRepository.GetLogs());
             }
             catch (Exception ex)
             {
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Error Retrieving data from the database.{ex}");
+                    $"Error Retrieving data from the database. {ex}");
             }
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Department>> GetDepartment(int Id)
+        public async Task<ActionResult<Log>> GetLog(int Id)
         {
             try
             {
-                var result = await departmentRepository.GetDepartment(Id);
+                var result = await logRepository.GetLog(Id);
                 if (result == null)
                 {
                     return NotFound();
@@ -57,41 +56,41 @@ namespace Project.Server.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Department>> CreateDepartment(Department department)
+        public async Task<ActionResult<Log>> CreateLog(Log log)
         {
             try
             {
-                if (department == null)
+                if (log == null)
                 {
                     return BadRequest();
                 }
-                var CreatedDepartment = await departmentRepository.AddDepartment(department);
+                var CreatedLog = await logRepository.AddLog(log);
 
-                return CreatedAtAction(nameof(GetDepartment),
-                                       new { id = CreatedDepartment.DepartmentId }, CreatedDepartment);
+                return CreatedAtAction(nameof(GetLog),
+                                       new { id = CreatedLog.LogId }, CreatedLog);
             }
             catch (Exception ex)
-            {
+            { 
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Error adding data to the database. {ex}" );
+                    $"Error adding data to the database. {ex}");
             }
         }
 
 
         [HttpPut]
-        public async Task<ActionResult<Department>> UpdateDepartment(Department department)
+        public async Task<ActionResult<Log>> UpdateLog(Log log)
         {
             try
             {
-                var departmentToUpdate = await departmentRepository.GetDepartment(department.DepartmentId);
+                var logToUpdate = await logRepository.GetLog(log.LogId);
 
-                if (departmentToUpdate == null)
+                if (logToUpdate == null)
                 {
-                    return NotFound($"Department with the Id = {department.DepartmentId} Not Found");
+                    return NotFound($"Log with the Id = {log.LogId} Not Found");
                 }
 
-                return await departmentRepository.UpdateDepartment(department);
+                return await logRepository.UpdateLog(log);
             }
             catch (Exception ex)
             {
@@ -103,16 +102,16 @@ namespace Project.Server.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<Department>> DeleteDepartment(int id)
+        public async Task<ActionResult<Log>> DeleteLog(int id)
         {
             try
             {
-                var departmentToDelete = await departmentRepository.GetDepartment(id);
-                if (departmentToDelete == null)
+                var logToDelete = await logRepository.GetLog(id);
+                if (logToDelete == null)
                 {
-                    return NotFound($"Department with the Id = {id} Not Found");
+                    return NotFound($"Log with the Id = {id} Not Found");
                 }
-                return await departmentRepository.DeleteDepartment(id);
+                return await logRepository.DeleteLog(id);
             }
             catch (Exception ex)
             {

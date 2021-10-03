@@ -1,0 +1,41 @@
+﻿@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@inject ILogger<Error> logger
+@inject IWebAssemblyHostEnvironment webAssemblyHostEnvironment
+@inject ModalService _modalService
+
+<CascadingValue Value=this>
+    @ChildContent
+</CascadingValue>
+
+@code{
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public void ProcessError(Exception ex)
+    {
+        if (!webAssemblyHostEnvironment.IsDevelopment())
+        {
+            _modalService.Error(new ConfirmOptions()
+            {
+                Title = "Error.",
+                Content = "Oops, something has gone wrong. please contact system Admin."
+            });
+        }
+        else
+        {
+            _modalService.Error(new ConfirmOptions()
+            {
+                Title = "Error.",
+                Content = "Oops, something has gone wrong. please check logs.",
+                OnOk = OnOkClick
+            });
+        }
+        logger.LogError(ex, "");
+    }
+
+    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
+    {
+        await Task.Delay(2000);
+    };
+}

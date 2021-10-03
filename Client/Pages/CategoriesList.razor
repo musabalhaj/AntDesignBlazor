@@ -1,0 +1,187 @@
+﻿@page "/categories"
+@inject ICategoryService CategoryService
+@inject ModalService _modalService
+
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem>Categories</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<Divider />
+
+<Button Type="primary" OnClick="@(()=>{ _Cereatevisible = true;})" Class="mb-2">
+    <Icon Type="plus" Theme="outline" /> New Category
+</Button>
+
+<Card Hoverable Title="Categories List">
+    <Table DataSource="Categories" PageSize="10" Loading="_loading">
+        <Column @bind-Field="@context.Name" Sortable></Column>
+        <ActionColumn Title="Action">
+            <Space>
+                <SpaceItem>
+                    <a class="btn btn-success btn-flat m-1" href="@($"editcategory/{context.Id}")">
+                        <Icon Type="edit" Theme="outline" /> Edit
+                    </a>
+                    <Button Danger OnClick="@(()=>{ _visible = true; _Id = context.Id; })">
+                        <Icon Type="delete" Theme="outline" /> Delete
+                    </Button>
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+    </Table>
+</Card>
+
+<Modal Title="@_title"
+       Visible="@_visible"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel"
+       DestroyOnClose="true"
+       OkType="danger">
+    Do you want to Delete This Category?
+</Modal>
+
+@code{
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    bool _loading;
+    public List<Category> Categories { get; set; } = new List<Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _loading = true;
+            Categories = (await CategoryService.GetCategories()).ToList();
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
+    }
+
+    string _title = "Delete Confirmation";
+    bool _visible = false;
+    int _Id;
+
+    private async Task HandleOk(MouseEventArgs e)
+    {
+        try
+        {
+            await CategoryService.DeleteCategory(_Id);
+            Categories = (await CategoryService.GetCategories()).ToList();
+            _visible = false;
+            HandleSuccess();
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        _visible = false;
+    }
+
+    private void HandleSuccess()
+    {
+        _modalService.Success(new ConfirmOptions()
+        {
+            Title = "Success.",
+            Content = "Category Deleted Successfully.",
+            OnOk = OnOkClick
+        });
+    }
+
+    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
+    {
+        await Task.Delay(1000);
+    };
+
+}
+
+<Modal Title="@_Createtitle"
+       Visible="@_Cereatevisible"
+       OnOk="@HandleOkCreate"
+       OnCancel="@HandleCancelCreate"
+       DestroyOnClose="true"
+       Class="Create">
+
+    <Form Model="@Category"
+          OnFinish="HamdleValidSubmit"
+          Layout="vertical">
+        <ValidationSummary />
+        <FormItem Label="Category Name">
+            <Input @bind-Value="@context.Name" />
+        </FormItem>
+        <Button Type="@ButtonType.Primary" HtmlType="submit">
+            Create
+        </Button>
+    </Form>
+
+</Modal>
+
+@code{
+    string _Createtitle = "New Category";
+    bool _Cereatevisible = false;
+
+    protected async Task HandleOkCreate()
+    {
+        await HamdleValidSubmit();
+    }
+
+    public Category Category { get; set; } = new Category();
+
+    protected async Task HamdleValidSubmit()
+    {
+        try
+        {
+            var result = await CategoryService.CreateCategory(Category);
+            if (result != null)
+            {
+
+                _Cereatevisible = false;
+                await HandleSuccessCreate();
+            }
+        }
+        catch (Exception ex)
+        {
+            Error.ProcessError(ex);
+
+        }
+
+    }
+
+    private async Task HandleSuccessCreate()
+    {
+        try
+        {
+            _modalService.Success(new ConfirmOptions()
+            {
+                Title = "Success",
+                Content = "Category Added Successfully."
+            });
+            Categories = (await CategoryService.GetCategories()).ToList();
+            Category.Name = null;
+        }
+        catch (Exception ex)
+        {
+            Error.ProcessError(ex);
+
+        }
+
+    }
+
+    private void HandleCancelCreate(MouseEventArgs e)
+    {
+        _Cereatevisible = false;
+        Category.Name = null;
+    }
+}

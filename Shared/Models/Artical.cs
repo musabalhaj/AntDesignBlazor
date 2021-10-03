@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project.Shared.CustomValidation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace Project.Shared.Models
         [Required]
         public string Body { get; set; }
         public string Image { get; set; }
+        [Required]
+        [SelectValidation(SelectName = "Cateogry")]
         public int CategoryId { get; set; }
         public Category Category { get; set; }
     }

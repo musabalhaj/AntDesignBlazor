@@ -1,0 +1,66 @@
+﻿@page "/displayartical/{id}"
+@inject IArticalService ArticalService
+@inject NavigationManager NavigationManager
+@inject ICategoryService CategoryService
+
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem Href="/articals">Articals</BreadcrumbItem>
+        <BreadcrumbItem>Information</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<hr />
+
+<div>
+    <Card Hoverable Loading="_loading" Style="width: 400px; margin-top: 16px; margin: auto">
+        <Body>
+            <ul class="list-group list-unstyled mb-3">
+                <li class="list-group-item"><CardMeta Avatar="@Artical.Image" /></li>
+                <li class="list-group-item">
+                    <b><i class="oi oi-person"></i> Author :</b> <a>@Artical.Author</a>
+                </li>
+                <li class="list-group-item">
+                    <b><i class="oi oi-envelope-open"></i> Title :</b> <a>@Artical.Title</a>
+                </li>
+                <li class="list-group-item">
+                    <b><i class="oi oi-list"></i> Category :</b> <a>@Artical.Category.Name</a>
+                </li>
+                <li class="list-group-item">
+                    <b><i class="oi oi-person"></i> Body :</b> <a>@Artical.Body</a>
+                </li>
+            </ul>
+        </Body>
+    </Card>
+</div>
+
+@code {
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
+    public List<Category> Categories { get; set; } = new List<Category>();
+    public Category Category { get; set; } = new Category();
+    public Artical Artical { get; set; } = new Artical();
+    bool _loading;
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            _loading = true;
+            Artical = await ArticalService.GetArtical(int.Parse(Id));
+            Categories = (await CategoryService.GetCategories()).ToList();
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
+    }
+
+
+}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project.Shared.CustomValidation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace Project.Shared.Models
         public string LastName { get; set; }
         [Required]
         [EmailAddress]
+        [EmailDomainValidation(AllowedDomain = "gmail.com")]
         public string Email { get; set; }
         [Required]
         [Display(Name = "Date Of Birth")]
@@ -30,6 +32,7 @@ namespace Project.Shared.Models
         public Gender Gender { get; set; }
         [Required]
         [Display(Name = "Department")]
+        [SelectValidation(SelectName ="Department")]
         public int DepartmentId { get; set; }
         public string PhotoPath { get; set; }
         public Department Department { get; set; }
