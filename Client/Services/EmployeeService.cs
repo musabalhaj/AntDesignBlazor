@@ -14,48 +14,55 @@ namespace Project.Client.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly HttpClient httpClient;
-        private readonly NavigationManager navigationManager;
+        private readonly StatusCodeService statusCodeService;
 
-        public EmployeeService(HttpClient httpClient, NavigationManager navigationManager)
+        public EmployeeService(HttpClient httpClient, StatusCodeService statusCodeService)
         {
             this.httpClient = httpClient;
-            this.navigationManager = navigationManager;
+            this.statusCodeService = statusCodeService;
         }
         public async Task<Employee> CreateEmployee(Employee newEmployee)
         {
-            // var Employee = await httpClient.PostAsJsonAsync<Employee>("/api/Employees", newEmployee);
-            // return await Employee.Content.ReadFromJsonAsync<Employee>();
-            var Employee = await httpClient.PostAsJsonAsync<Employee>("/api/Employees", newEmployee);
-            if (Employee.IsSuccessStatusCode)         
-                return await Employee.Content.ReadFromJsonAsync<Employee>();           
-            else
-                HandleStatusCode(Employee);
+            var Employee = await httpClient.PostAsJsonAsync("/api/Employees", newEmployee);
+            if (Employee.IsSuccessStatusCode)
+            {
+                return await Employee.Content.ReadFromJsonAsync<Employee>();
+            }
+            await statusCodeService.HandleStatusCode(Employee);
             return null;
         }
-        public async Task DeleteEmployee(int id)
+        public async Task<Employee> DeleteEmployee(int id)
         {
-            await httpClient.DeleteAsync($"/api/Employees/{id}");
+            var Employee = await httpClient.DeleteAsync($"/api/Employees/{id}");
+            if (Employee.IsSuccessStatusCode)
+            {
+                return await Employee.Content.ReadFromJsonAsync<Employee>();
+            }
+            await statusCodeService.HandleStatusCode(Employee);
+            return null;
         }
 
         public async Task<Employee> GetEmployee(int id)
         {
-            var response = await httpClient.GetAsync($"/api/Employees/{id}");
-            var content = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode) {
-                var Employee = JsonSerializer.Deserialize<Employee>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-                return Employee;        
+            var Employee = await httpClient.GetAsync($"/api/Employees/{id}");
+            if (Employee.IsSuccessStatusCode)
+            {
+                return await Employee.Content.ReadFromJsonAsync<Employee>();
             }
-            HandleStatusCode(response);
+            await statusCodeService.HandleStatusCode(Employee);
             return null;
 
         }
 
         public async Task<IEnumerable<Employee>> GetEmployees()
         {
-            return await httpClient.GetFromJsonAsync<IEnumerable<Employee>>("/api/Employees");
+            var Employees = await httpClient.GetAsync("/api/Employees");
+            if (Employees.IsSuccessStatusCode)
+            {
+                return await Employees.Content.ReadFromJsonAsync<IEnumerable<Employee>>();
+            }
+            await statusCodeService.HandleStatusCode(Employees);
+            return null;
         }
 
         public async Task<Employee> UpdateEmployee(Employee updatedEmployee)
@@ -64,28 +71,9 @@ namespace Project.Client.Services
             if (Employee.IsSuccessStatusCode)
                 return await Employee.Content.ReadFromJsonAsync<Employee>();
             else
-                HandleStatusCode(Employee);
+                await statusCodeService.HandleStatusCode(Employee);
             return null;
         }
 
-        public void HandleStatusCode(HttpResponseMessage responseMessage)
-        {
-            var statusCode = responseMessage.StatusCode;
-            switch (statusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                    navigationManager.NavigateTo("/error400");
-                    break;
-                case HttpStatusCode.NotFound:
-                    navigationManager.NavigateTo("/error404");
-                    break;
-                case HttpStatusCode.InternalServerError:
-                    navigationManager.NavigateTo("/error500");
-                    break;
-                default:
-                    navigationManager.NavigateTo("/error400");
-                    break;
-            }
-        }
     }
 }

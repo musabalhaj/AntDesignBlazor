@@ -1,13 +1,20 @@
-﻿@page "/error404"
+﻿@page "/error404/{content?}"
 
 <Card>
     <Result Status="404"
-            Title="404"
-            SubTitle="Sorry, the page you visited does not exist."
+            Title="Not Found"
+            SubTitle="@Content"
             Extra="extra" />
 </Card>
 
 @code
 {
+    [Parameter]
+    public string Content { get; set; }
     RenderFragment extra =@<a class="btn btn-primary" href="/">Back Home</a>;
+
+    protected override void OnInitialized()
+    {
+        Content = Content ?? "Sorry, the page you visited does not exist.";
+    }
 }

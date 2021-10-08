@@ -1,13 +1,20 @@
-﻿@page "/error500"
+﻿@page "/error500/{content?}"
 
 <Card>
     <Result Status="500"
-            Title="500"
-            SubTitle="Sorry, something went wrong."
+            Title="Internal Server Error."
+            SubTitle="@Content"
             Extra="extra" />
 </Card>
 
 @code
 {
+    [Parameter]
+    public string Content { get; set; }
     RenderFragment extra =@<a class="btn btn-primary" href="/">Back Home</a>;
+
+    protected override void OnInitialized()
+    {
+        Content = Content ?? "Sorry, something went wrong.";
+    }
 }

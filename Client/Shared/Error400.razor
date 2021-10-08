@@ -1,11 +1,19 @@
-﻿@page "/error400"
+﻿@page "/error400/{content?}"
 
 <Card>
     <Result Status="warning"
-            Title="There are some problems with your operation."
+            Title="Bad Request"
+            SubTitle="@Content"
             Extra=extra />
 </Card>
 @code
 {
+    [Parameter]
+    public string Content { get; set; }
     RenderFragment extra =@<a class="btn btn-primary" href="/">Back Home</a>;
+
+    protected override void OnInitialized()
+    {
+        Content = Content ?? "There are some problems with your operation.";
+    }
 }

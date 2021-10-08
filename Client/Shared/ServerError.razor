@@ -1,0 +1,34 @@
+﻿@page "/servererror/{content?}"
+
+<Card>
+    <Result Status="error"
+            Title="Submission Failed"
+            SubTitle="Please check and modify the following information before resubmitting."
+            Extra=extra>
+        <div class="desc">
+            <Paragraph>
+                <Text Strong Style="font-size: 16px;">
+                    The content you submitted has the following error:
+                </Text>
+            </Paragraph>
+            <Paragraph>
+                <Text Strong Style="color:red;">
+                    <Icon Type="close-circle" Theme="Outline" Class="site-result-demo-error-icon" /> @Content
+                </Text>
+            </Paragraph>
+        </div>
+    </Result>
+</Card>
+
+@code {
+
+    [Parameter]
+    public string Content { get; set; }
+
+    RenderFragment extra =@<Template> <a class="btn btn-primary" href="/">Back Home</a> </Template>;
+
+    protected override void OnInitialized()
+    {
+        Content = Content ?? "Sorry, something went wrong.";
+    }
+}

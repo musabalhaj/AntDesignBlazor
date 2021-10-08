@@ -27,11 +27,10 @@ namespace Project.Server.Controllers
             {
                 return Ok(await employeeRepository.GetEmployees());
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Error Geting Data From The Database. {ex}");
+                    "Error Geting Data From The Database");
             }
         }
 
@@ -43,15 +42,14 @@ namespace Project.Server.Controllers
                 var result = await employeeRepository.GetEmployee(Id);
                 if (result == null)
                 {
-                    return NotFound();
+                    return NotFound("Sorry, Employee Not Found.");
                 }
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Error Geting Data From The Database. {ex}");
+                    "Error Geting Data From The Database.");
             }
         }
 
@@ -67,19 +65,17 @@ namespace Project.Server.Controllers
                 var emp = await employeeRepository.GetEmployeeByEmail(employee.Email);
                 if (emp != null)
                 {
-                    ModelState.AddModelError(nameof(employee.Email), "Email Allready in use");
-                    return BadRequest(ModelState);
+                    return BadRequest($"Email '{employee.Email}' is Allready in use");
                 }
                 var CreatedEmployee = await employeeRepository.AddEmployee(employee);
 
                 return CreatedAtAction(nameof(GetEmployee),
                                        new { id = CreatedEmployee.EmployeeId }, CreatedEmployee);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                     $"Error Adding Data To The Database. {ex}");
+                     "Error Adding Data To The Database.");
             }
         }
 
@@ -92,16 +88,15 @@ namespace Project.Server.Controllers
 
                 if (employeeToUpdate == null)
                 {
-                    return NotFound($"Employee with the Id = {employee.EmployeeId} Not Found");
+                    return NotFound("Sorry, Employee Not Found.");
                 }
 
                 return await employeeRepository.UpdateEmployee(employee);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Error Updating Data. {ex}");
+                    "Error Updating Data.");
             }
         }
 
@@ -113,15 +108,14 @@ namespace Project.Server.Controllers
                 var employeeToDelete = await employeeRepository.GetEmployee(id);
                 if (employeeToDelete == null)
                 {
-                    return NotFound($"Employee with the Id = {id} Not Found");
+                    return NotFound("Sorry, Employee Not Found.");
                 }
                 return await employeeRepository.DeleteEmployee(id);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Error Deleting data. {ex}");
+                    "Error Deleting data.");
             }
         }
 
@@ -135,12 +129,12 @@ namespace Project.Server.Controllers
                 {
                     return Ok(result);
                 }
-                return NotFound();
+                return NotFound("Sorry, Employee Not Found.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                                    $"Error Geting Data From The Database. {ex}");
+                                    "Error Geting Data From The Database.");
             }
         }
 

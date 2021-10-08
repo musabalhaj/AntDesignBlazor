@@ -1,4 +1,4 @@
-﻿@page "/editcategory/{id}"
+﻿@page "/editcategory/{id:int}"
 @inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 @inject ModalService _modalService
@@ -32,7 +32,7 @@
     public Error Error { get; set; }
 
     [Parameter]
-    public string Id { get; set; }
+    public int Id { get; set; }
     public Category Category { get; set; } = new Category();
     bool _loading;
 
@@ -41,7 +41,7 @@
         try
         {
             _loading = true;
-            Category = await CategoryService.GetCategory(int.Parse(Id));
+            Category = await CategoryService.GetCategory(Id);
             _loading = false;
         }
         catch (Exception ex)

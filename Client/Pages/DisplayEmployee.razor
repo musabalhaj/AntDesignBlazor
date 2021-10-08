@@ -1,4 +1,4 @@
-﻿@page "/displayemployee/{id}"
+﻿@page "/displayemployee/{id:int}"
 @inject IEmployeeService EmployeeService
 @inject NavigationManager NavigationManager
 @inject IDepartmentService DepartmentService
@@ -42,7 +42,7 @@
     public Error Error { get; set; }
 
     [Parameter]
-    public string Id { get; set; }
+    public int Id { get; set; }
     public List<Department> Departments { get; set; } = new List<Department>();
     public Department Department { get; set; } = new Department();
     public Employee Employee { get; set; } = new Employee();
@@ -53,7 +53,7 @@
         try
         {
             _loading = true;
-            Employee = await EmployeeService.GetEmployee(int.Parse(Id));
+            Employee = await EmployeeService.GetEmployee(Id);
             Departments = (await DepartmentService.GetDepartments()).ToList();
             _loading = false;
         }

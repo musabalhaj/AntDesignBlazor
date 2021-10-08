@@ -12,6 +12,6 @@ namespace Project.Client.Services
         Task<Employee> GetEmployee(int id);
         Task<Employee> CreateEmployee(Employee newEmployee);
         Task<Employee> UpdateEmployee(Employee updatedEmployee);
-        Task DeleteEmployee(int id);
+        Task<Employee> DeleteEmployee(int id);
     }
 }

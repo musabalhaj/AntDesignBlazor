@@ -1,4 +1,4 @@
-﻿@page "/displayartical/{id}"
+﻿@page "/displayartical/{id:int}"
 @inject IArticalService ArticalService
 @inject NavigationManager NavigationManager
 @inject ICategoryService CategoryService
@@ -39,7 +39,7 @@
     public Error Error { get; set; }
 
     [Parameter]
-    public string Id { get; set; }
+    public int Id { get; set; }
     public List<Category> Categories { get; set; } = new List<Category>();
     public Category Category { get; set; } = new Category();
     public Artical Artical { get; set; } = new Artical();
@@ -50,7 +50,7 @@
         try
         {
             _loading = true;
-            Artical = await ArticalService.GetArtical(int.Parse(Id));
+            Artical = await ArticalService.GetArtical(Id);
             Categories = (await CategoryService.GetCategories()).ToList();
             _loading = false;
         }
