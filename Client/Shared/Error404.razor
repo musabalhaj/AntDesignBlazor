@@ -12,10 +12,12 @@
     [Parameter]
     public string Content { get; set; }
 
-    RenderFragment extra =@<a class="btn btn-primary" href="/">Back Home</a>;
+    RenderFragment extra =@<Template>
+                               <a class="btn btn-primary" href="/">Go Home</a>
+    </Template>;
 
-    protected override void OnInitialized()
-    {
-        Content = Content ?? "Sorry, the page you visited does not exist.";
-    }
+protected override void OnInitialized()
+{
+Content = Content ?? "Sorry, the page you visited does not exist.";
+}
 }

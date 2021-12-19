@@ -1,47 +1,68 @@
 ﻿@page "/employees"
-@inject IEmployeeService EmployeeService
-@inject ModalService _modalService
+@inject IEmployeeViewModel EmployeeViewModel
+@inject NavigationManager NavigationManager
 
-<div class="mb-2">
-    <Breadcrumb>
-        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem>Employees</BreadcrumbItem>
-    </Breadcrumb>
-</div>
-<hr />
-<a class="btn btn-info btn-sm btn-flat mb-2 pull-right" href="createemployee">
-    <i class="oi oi-plus"></i> New Employee
-</a>
+<Breadcrumb>
+    <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+    <BreadcrumbItem>Employees</BreadcrumbItem>
+</Breadcrumb>
+<Divider />
 
+
+<Button Type="@ButtonType.Primary" OnClick="@(() => NavigationManager.NavigateTo("createemployee"))" Icon="plus">
+    New Employee
+</Button>
 
 <Card Hoverable Title="Employees List">
 
-    <Table DataSource="Employees" PageSize="10" Class="table table-responsive" Loading="_loading">
-        <Column @bind-Field="@context.FirstName" Sortable></Column>
-        <Column @bind-Field="@context.LastName"></Column>
-        <Column @bind-Field="@context.Email"></Column>
-        <Column @bind-Field="@context.Gender"></Column>
-        <Column @bind-Field="@context.DepartmentId">@context.Department.DepartmentName</Column>
-        <Column @bind-Field="@context.DateOfBirth" Format="dd/MM/yyy"></Column>
-        <ActionColumn Title="Action">
-            <Space>
-                <SpaceItem>
-                    <a class="btn btn-info btn-flat m-1" href="@($"displayemployee/{context.EmployeeId}")">
-                        <Icon Type="eye" Theme="outline" />
-                    </a>
-                    <a class="btn btn-success btn-flat m-1" href="@($"editemployee/{context.EmployeeId}")">
-                        <Icon Type="edit" Theme="outline" />
-                    </a>
-                    <Button Danger OnClick="@(()=>{ _visible = true; _Id = context.EmployeeId; })">
-                        <Icon Type="delete" Theme="outline" />
-                    </Button>
-                </SpaceItem>
-            </Space>
-        </ActionColumn>
+    <Search OnSearch="OnSearchChange" @bind-Value="Name" />
+
+    <Table DataSource="Employees.Skip((pageIndex-1)*pageSize).Take(pageSize)" Size="TableSize.Small" Class="table table-responsive"
+           RowExpandable="@((employee) => employee.Data.FirstName != "Not Expandable")" Loading="_loading"
+           Bordered PaginationPosition="bottomCenter">
+        <RowTemplate>
+            <Column @bind-Field="@context.FirstName" Filterable Sortable Title="Full Name" Fixed="left">
+                @context.FirstName @context.LastName
+            </Column>
+            <Column @bind-Field="@context.Email"></Column>
+            <Column @bind-Field="@context.Gender" TData="Gender" Filterable></Column>
+            <Column @bind-Field="@context.DateOfBirth" TData="DateTime" Format="dd/MM/yyy" Filterable>
+                @context.DateOfBirth.ToLongDateString()
+            </Column>
+            <ActionColumn Title="Actions">
+                <Space>
+                    <SpaceItem>
+                        <Button Type="@ButtonType.Link" Icon="eye" Color="Color.Blue5"
+                                OnClick="@(() => NavigationManager.NavigateTo($"displayemployee/{context.EmployeeId}"))">
+                        </Button>
+
+                        <Button Type="@ButtonType.Link" Icon="edit" Color="Color.Green5"
+                                OnClick="@(() => NavigationManager.NavigateTo($"editemployee/{context.EmployeeId}"))">
+                        </Button>
+
+                        <Button Type="@ButtonType.Link" Icon="delete" Color="Color.Red5"
+                                OnClick="@(() => { _visible = true; _Id = context.EmployeeId; })">
+                        </Button>
+                    </SpaceItem>
+                </Space>
+            </ActionColumn>
+        </RowTemplate>
+        <ExpandTemplate>
+            Department :  @context.Data.Department.DepartmentName
+        </ExpandTemplate>
+        <PaginationTemplate>
+            <Pagination Total="@total"
+                        PageSize="pageSize"
+                        Current="pageIndex"
+                        ShowSizeChanger="@true"
+                        Size="small"
+                        ShowQuickJumper
+                        OnChange="HandlePageChange"
+                        HideOnSinglePage />
+        </PaginationTemplate>
     </Table>
 
 </Card>
-
 
 <Modal Title="@_title" Visible="@_visible" OnOk="@HandleOk" OnCancel="@HandleCancel" DestroyOnClose="true" OkType="danger">
     Do you want to Delete This Employee?
@@ -59,12 +80,11 @@
         try
         {
             _loading = true;
-            Employees = (await EmployeeService.GetEmployees()).ToList();
+            Employees = (await EmployeeViewModel.GetEmployees()).ToList();
             _loading = false;
         }
         catch (Exception ex)
         {
-
             Error.ProcessError(ex);
         }
 
@@ -78,14 +98,13 @@
     {
         try
         {
-            await EmployeeService.DeleteEmployee(_Id);
-            Employees = (await EmployeeService.GetEmployees()).ToList();
+            await EmployeeViewModel.DeleteEmployee(_Id);
+            Employees = (await EmployeeViewModel.GetEmployees()).ToList();
             _visible = false;
-            HandleSuccess();
+            EmployeeViewModel.HandleSuccessDelete();
         }
         catch (Exception ex)
         {
-
             Error.ProcessError(ex);
         }
 
@@ -96,19 +115,32 @@
         _visible = false;
     }
 
-    private void HandleSuccess()
+
+    private int total => Employees.Count();
+    private int pageSize { get; set; } = 10;
+    private int pageIndex { get; set; } = 1;
+
+    private void HandlePageChange(PaginationEventArgs args)
     {
-        _modalService.Success(new ConfirmOptions()
+        if (pageIndex != args.Page)
         {
-            Title = "Success.",
-            Content = "Employee Deleted Successfully.",
-            OnOk = OnOkClick
-        });
+            pageIndex = args.Page;
+        }
+
+        if (pageSize != args.PageSize)
+        {
+            pageSize = args.PageSize;
+        }
     }
 
-    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
+    private string Name = "";
+    private async Task OnSearchChange()
     {
-        await Task.Delay(1000);
-    };
+        // use delay if you use onchange()
+        //await Task.Delay(1000);
 
+        _loading = true;
+        Employees = (await EmployeeViewModel.Search(Name)).ToList();
+        _loading = false;
+    }
 }

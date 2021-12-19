@@ -15,20 +15,34 @@
 </Button>
 
 <Card Hoverable Title="Categories List">
-    <Table DataSource="Categories" PageSize="10" Loading="_loading">
-        <Column @bind-Field="@context.Name" Sortable></Column>
-        <ActionColumn Title="Action">
-            <Space>
-                <SpaceItem>
-                    <a class="btn btn-success btn-flat m-1" href="@($"editcategory/{context.Id}")">
-                        <Icon Type="edit" Theme="outline" /> Edit
-                    </a>
-                    <Button Danger OnClick="@(()=>{ _visible = true; _Id = context.Id; })">
-                        <Icon Type="delete" Theme="outline" /> Delete
-                    </Button>
-                </SpaceItem>
-            </Space>
-        </ActionColumn>
+    <Table DataSource="Categories.Skip((pageIndex-1)*pageSize).Take(pageSize)" PageSize="10" Loading="_loading">
+        <ChildContent>
+            <Column @bind-Field="@context.Name" Sortable Filterable></Column>
+            <ActionColumn Title="Action">
+                <Space>
+                    <SpaceItem>
+                        <a class="btn btn-success btn-flat m-1" href="@($"editcategory/{context.Id}")">
+                            <Icon Type="edit" Theme="outline" /> Edit
+                        </a>
+                        <Button Danger OnClick="@(()=>{ _visible = true; _Id = context.Id; })">
+                            <Icon Type="delete" Theme="outline" /> Delete
+                        </Button>
+                    </SpaceItem>
+                </Space>
+            </ActionColumn>
+        </ChildContent>
+        <PaginationTemplate>
+            <div style="display: flex; align-items: center">
+                <Pagination Class="my-custom-pagination"
+                            Total="@total"
+                            PageSize="pageSize"
+                            Current="pageIndex"
+                            ShowSizeChanger="@true"
+                            Size="small"
+                            ShowQuickJumper
+                            OnChange="HandlePageChange" />
+            </div>
+        </PaginationTemplate>
     </Table>
 </Card>
 
@@ -42,6 +56,11 @@
 </Modal>
 
 @code{
+
+    private int total => Categories.Count();
+    private int pageSize { get; set; } = 10;
+    private int pageIndex { get; set; } = 1;
+
     [CascadingParameter]
     public Error Error { get; set; }
 
@@ -104,6 +123,19 @@
     {
         await Task.Delay(1000);
     };
+
+    private void HandlePageChange(PaginationEventArgs args)
+    {
+        if (pageIndex != args.Page)
+        {
+            pageIndex = args.Page;
+        }
+
+        if (pageSize != args.PageSize)
+        {
+            pageSize = args.PageSize;
+        }
+    }
 
 }
 
@@ -185,3 +217,14 @@
         Category.Name = null;
     }
 }
+
+<style>
+    .my-custom-pagination {
+        margin: 15px 0;
+    }
+
+        .my-custom-pagination .ant-pagination-item,
+        .my-custom-pagination .ant-pagination-item-link {
+            border-radius: 100%;
+        }
+</style>

@@ -1,8 +1,7 @@
 ﻿@page "/editemployee/{id:int}"
-@inject IEmployeeService EmployeeService
+@inject IEmployeeViewModel EmployeeViewModel
 @inject NavigationManager NavigationManager
-@inject IDepartmentService DepartmentService
-@inject ModalService _modalService
+@inject IDepartmentVeiwModel DepartmentVeiwModel
 
 <div class="mb-2">
     <Breadcrumb>
@@ -35,7 +34,8 @@
                     LabelName="@nameof(Department.DepartmentName)"
                     @bind-Value="@context.DepartmentId"
                     EnableSearch
-                    AllowClear>
+                    AllowClear
+                    Loading="@_loading">
             </Select>
         </FormItem>
         <FormItem Label="Birth Date" Required>
@@ -60,18 +60,33 @@
     public int Id { get; set; }
     [Parameter]
     public EventCallback<string> OnChange { get; set; }
-    public List<Department> Departments { get; set; } = new List<Department>();
-    public Department Department { get; set; } = new Department();
     public Employee Employee { get; set; } = new Employee();
     bool _loading;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        try
+        {
+            _loading = true;
+            Employee = await EmployeeViewModel.GetEmployee(Id);
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+    }
+
+    public List<Department> Departments { get; set; } = new List<Department>();
+    public Department Department { get; set; } = new Department();
 
     protected async override Task OnInitializedAsync()
     {
         try
         {
             _loading = true;
-            Employee = await EmployeeService.GetEmployee(Id);
-            Departments = (await DepartmentService.GetDepartments()).ToList();
+            Departments = (await DepartmentVeiwModel.GetDepartments()).ToList();
             _loading = false;
         }
         catch (Exception ex)
@@ -97,10 +112,10 @@
     {
         try
         {
-            var result = await EmployeeService.UpdateEmployee(Employee);
+            var result = await EmployeeViewModel.UpdateEmployee(Employee);
             if (result != null)
             {
-                HandleSuccess();
+                EmployeeViewModel.HandleSuccessUpdate();
             }
         }
         catch (Exception ex)
@@ -111,19 +126,4 @@
 
     }
 
-    private void HandleSuccess()
-    {
-        _modalService.Success(new ConfirmOptions()
-        {
-            Title = "Success.",
-            Content = "Employee Updated Successfully.",
-            OnOk = OnOkClick
-        });
-        NavigationManager.NavigateTo("/employees");
-    }
-
-    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
-    {
-        await Task.Delay(1000);
-    };
 }

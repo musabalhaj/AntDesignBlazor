@@ -11,10 +11,12 @@
     [Parameter]
     public string Content { get; set; }
 
-    RenderFragment extra =@<a class="btn btn-primary" href="/">Back Home</a>;
+    RenderFragment extra =@<Template>
+        <PageHeader Class="site-page-header" Title="Go Back" Subtitle="Click the Icon to go back" BackIcon="@("backward")" />
+    </Template>;
 
-    protected override void OnInitialized()
-    {
-        Content = Content ?? "There are some problems with your operation.";
-    }
+protected override void OnInitialized()
+{
+Content = Content ?? "There are some problems with your operation.";
+}
 }

@@ -18,8 +18,8 @@ namespace Project.Client.Services
         }
         public async Task<Department> CreateDepartment(Department newDepartment)
         {
-            var category = await httpClient.PostAsJsonAsync<Department>("/api/Departments", newDepartment, null);
-            if (category.IsSuccessStatusCode)
+            var department = await httpClient.PostAsJsonAsync<Department>("/api/Departments", newDepartment, null);
+            if (department.IsSuccessStatusCode)
             {
                 return newDepartment;
             }

@@ -1,6 +1,5 @@
 ﻿@page "/departments"
-@inject IDepartmentService DepartmentService
-@inject ModalService _modalService
+@inject IDepartmentVeiwModel DepartmentVeiwModel
 
 <div class="mb-2">
     <Breadcrumb>
@@ -53,7 +52,7 @@
         try
         {
             _loading = true;
-            Departments = (await DepartmentService.GetDepartments()).ToList();
+            Departments = (await DepartmentVeiwModel.GetDepartments()).ToList();
             _loading = false;
         }
         catch (Exception ex)
@@ -72,10 +71,10 @@
     {
         try
         {
-            await DepartmentService.DeleteDepartment(_Id);
-            Departments = (await DepartmentService.GetDepartments()).ToList();
+            await DepartmentVeiwModel.DeleteDepartment(_Id);
+            Departments = (await DepartmentVeiwModel.GetDepartments()).ToList();
             _visible = false;
-            HandleSuccess();
+            DepartmentVeiwModel.HandleSuccessDelete();
         }
         catch (Exception ex)
         {
@@ -89,21 +88,6 @@
     {
         _visible = false;
     }
-
-    private void HandleSuccess()
-    {
-        _modalService.Success(new ConfirmOptions()
-        {
-            Title = "Success.",
-            Content = "Department Deleted Successfully.",
-            OnOk = OnOkClick
-        });
-    }
-
-    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
-    {
-        await Task.Delay(1000);
-    };
 
 }
 

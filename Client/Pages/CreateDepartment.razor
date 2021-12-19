@@ -1,7 +1,5 @@
 ﻿@page "/createdepartment"
-@inject IDepartmentService DepartmentService
-@inject NavigationManager NavigationManager
-@inject ModalService _modalService
+@inject IDepartmentVeiwModel DepartmentVeiwModel
 
 <div class="mb-2">
     <Breadcrumb>
@@ -40,10 +38,10 @@
     {
         try
         {
-            var result = await DepartmentService.CreateDepartment(Department);
+            var result = await DepartmentVeiwModel.CreateDepartment(Department);
             if (result != null)
             {
-                HandleSuccess();
+                DepartmentVeiwModel.HandleSuccessCreate();
             }
         }
         catch (Exception ex)
@@ -54,22 +52,6 @@
 
     }
 
-
-    private void HandleSuccess()
-    {
-        _modalService.Success(new ConfirmOptions()
-        {
-            Title = "Success.",
-            Content = "Department Added Successfully.",
-            OnOk = OnOkClick
-        });
-        NavigationManager.NavigateTo("/departments");
-    }
-
-    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
-    {
-        await Task.Delay(1000);
-    };
 }
 
 

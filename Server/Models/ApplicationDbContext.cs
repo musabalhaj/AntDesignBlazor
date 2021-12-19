@@ -19,6 +19,8 @@ namespace Project.Server.Models
         public DbSet<Category> Categories { get; set; }
         public DbSet<Artical> Articals { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<Purchases> Purchases { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

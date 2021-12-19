@@ -1,7 +1,6 @@
 ﻿@page "/displayemployee/{id:int}"
-@inject IEmployeeService EmployeeService
-@inject NavigationManager NavigationManager
-@inject IDepartmentService DepartmentService
+@inject IEmployeeViewModel EmployeeViewModel
+@inject IDepartmentVeiwModel DepartmentVeiwModel
 
 <div class="mb-2">
     <Breadcrumb>
@@ -16,7 +15,16 @@
     <Card Hoverable Loading="_loading" Style="width: 400px; margin-top: 16px; margin: auto">
         <Body>
             <ul class="list-group list-unstyled mb-3">
-                <li class="list-group-item"><CardMeta Avatar="@Employee.PhotoPath" /></li>
+                <li class="list-group-item">
+                    @if (Employee.PhotoPath != null)
+                    {
+                        <CardMeta Avatar="@Employee.PhotoPath" />
+                    }
+                    else
+                    {
+                        <CardMeta Avatar="images/user.png" />
+                    }
+                            </li>
                 <li class="list-group-item">
                     <b><i class="oi oi-person"></i> Full Name :</b> <a>@Employee.FirstName @Employee.LastName</a>
                 </li>
@@ -53,8 +61,8 @@
         try
         {
             _loading = true;
-            Employee = await EmployeeService.GetEmployee(Id);
-            Departments = (await DepartmentService.GetDepartments()).ToList();
+            Employee = await EmployeeViewModel.GetEmployee(Id);
+            Departments = (await DepartmentVeiwModel.GetDepartments()).ToList();
             _loading = false;
         }
         catch (Exception ex)

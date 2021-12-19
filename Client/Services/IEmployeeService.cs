@@ -13,5 +13,6 @@ namespace Project.Client.Services
         Task<Employee> CreateEmployee(Employee newEmployee);
         Task<Employee> UpdateEmployee(Employee updatedEmployee);
         Task<Employee> DeleteEmployee(int id);
+        Task<IEnumerable<Employee>> Search(string name);
     }
 }

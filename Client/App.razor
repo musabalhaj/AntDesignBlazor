@@ -8,7 +8,7 @@
             <LayoutView Layout="@typeof(MainLayout)">
                 <Card>
                     <Result Status="404"
-                            Title="404"
+                            Title="Not Found"
                             SubTitle="Sorry, the page you visited does not exist."
                             Extra="extra" />
                 </Card>
@@ -20,6 +20,8 @@
 <AntContainer />
 @code
 {
-    RenderFragment extra =@<a class="btn btn-primary" href="/">Back Home</a>;
+    RenderFragment extra =@<Template>
+        <PageHeader Class="site-page-header" Title="Go Back" Subtitle="Click the Icon to go back" BackIcon="@("backward")" />
+    </Template>;
 
 }

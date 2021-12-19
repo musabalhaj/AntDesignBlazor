@@ -18,6 +18,8 @@
             </Paragraph>
         </div>
     </Result>
+
+    
 </Card>
 
 @code {
@@ -25,7 +27,7 @@
     [Parameter]
     public string Content { get; set; }
 
-    RenderFragment extra =@<Template> <a class="btn btn-primary" href="/">Back Home</a> </Template>;
+    RenderFragment extra =@<Template><PageHeader Class="site-page-header" Title="Go Back" Subtitle="Click the Icon to go back" BackIcon="@("backward")" /></Template>;
 
     protected override void OnInitialized()
     {

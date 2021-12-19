@@ -62,15 +62,23 @@ namespace Project.Server.Models
             IQueryable<Employee> query = context.Employees;
             if (!string.IsNullOrEmpty(name))
             {
-                query = query.Where(e => e.FirstName.Contains(name) ||
-                                    e.LastName.Contains(name));
+                query = query.Where(e => e.FirstName.Contains(name) || e.LastName.Contains(name)
+                                     || (e.FirstName + e.LastName).Contains(name) || (e.FirstName + " " + e.LastName).Contains(name));
+                return await query.Include(e => e.Department)
+                    .OrderByDescending(e => e.EmployeeId)
+                    .ToListAsync();
             }
             if (gender != null)
             {
                 query = query.Where(e => e.Gender == gender);
+                return await query.Include(e => e.Department)
+                    .OrderByDescending(e => e.EmployeeId)
+                    .ToListAsync();
             }
 
-            return await query.ToListAsync();
+            return await query.Include(e => e.Department)
+                    .OrderByDescending(e => e.EmployeeId)
+                    .ToListAsync();
         }
 
         public async Task<Employee> UpdateEmployee(Employee employee)

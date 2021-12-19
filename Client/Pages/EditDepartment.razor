@@ -1,7 +1,5 @@
 ﻿@page "/editdepartment/{id:int}"
-@inject IDepartmentService DepartmentService
-@inject NavigationManager NavigationManager
-@inject ModalService _modalService
+@inject IDepartmentVeiwModel DepartmentVeiwModel
 <div class="mb-2">
     <Breadcrumb>
         <BreadcrumbItem Href="/">Home</BreadcrumbItem>
@@ -41,7 +39,7 @@
         try
         {
             _loading = true;
-            Department = await DepartmentService.GetDepartment(Id);
+            Department = await DepartmentVeiwModel.GetDepartment(Id);
             _loading = false;
         }
         catch (Exception ex)
@@ -56,10 +54,10 @@
     {
         try
         {
-            var result = await DepartmentService.UpdateDepartment(Department);
+            var result = await DepartmentVeiwModel.UpdateDepartment(Department);
             if (result != null)
             {
-                HandleSuccess();
+                DepartmentVeiwModel.HandleSuccessUpdate();
             }
         }
         catch (Exception ex)
@@ -69,20 +67,4 @@
         }
 
     }
-
-    private void HandleSuccess()
-    {
-        _modalService.Success(new ConfirmOptions()
-        {
-            Title = "Success.",
-            Content = "Department Updated Successfully.",
-            OnOk = OnOkClick
-        });
-        NavigationManager.NavigateTo("/departments");
-    }
-
-    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
-    {
-        await Task.Delay(1000);
-    };
 }

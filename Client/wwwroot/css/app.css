@@ -8,7 +8,9 @@ html, body {
 a, .btn-link {
     color: #0366d6;
 }
-
+.ant-btn{
+    margin: 2px !important;
+}
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -50,27 +52,170 @@ a, .btn-link {
         top: 0.5rem;
     }
 
-.spinner {
-    border: 16px solid silver;
-    border-top: 16px solid #3a0647;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    animation: spin 700ms linear infinite;
-    top: 40%;
-    left: 45%;
-    position: absolute;
-}
-
 @keyframes spin {
-    0% {
-        transform: rotate(0deg)
-    }
-
-    100% {
-        transform: rotate(360deg)
+    to {
+        transform: rotate(360deg);
     }
 }
+
+@keyframes spin-rev {
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+.spinner {
+    margin: 50px auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+    .spinner::before, .spinner::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        -ms-border-radius: 50%;
+        -o-border-radius: 50%;
+        animation-name: spin;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+
+.spinner {
+    margin-top: 200px;
+    position: relative;
+    border: 5px solid #ea2372;
+    border-bottom-color: transparent;
+    animation-name: spin;
+    animation-duration: 1s;
+    animation-play-state: running;
+}
+
+    .spinner::before {
+        width: 64px;
+        height: 64px;
+        top: -12px;
+        left: -12px;
+        border: 5px solid #23a6fd;
+        border-top-color: transparent;
+    }
+
+    .spinner::after {
+        width: 78px;
+        height: 78px;
+        border: 5px solid #fca200;
+        border-left-color: transparent;
+        top: -19px;
+        left: -19px;
+    }
+/*green*/
+:root {
+    --p-color: #0f0;
+    --leg-color: #00c800;
+    --shadow-color: #b2ffb2;
+    --mouth-color: #080;
+}
+
+.monster {
+    margin: auto;
+    width: 100px;
+    height: 100px;
+    background-color: var(--p-color);
+    border-radius: 50px 50px 20px 20px;
+    position: relative;
+    box-shadow: 0 0 0 90px var(--shadow-color);
+}
+
+    .monster::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        box-shadow: 0 0 0 90px var(--shadow-color);
+        border-radius: 50%;
+        z-index: -1;
+    }
+
+.monster__eye {
+    margin-top: 10px;
+    background-color: #fff;
+    width: 70px;
+    height: 70px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    z-index: 2;
+}
+
+    .monster__eye::before,
+    .monster__eye::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+    }
+
+    .monster__eye::before {
+        background-color: #111;
+        width: 48px;
+        height: 48px;
+        top: 8px;
+        right: 8px;
+    }
+
+    .monster__eye::after {
+        background-color: #444;
+        width: 13px;
+        height: 13px;
+        top: 20px;
+        right: 15px;
+    }
+
+.monster__mouth {
+    background-color: var(--mouth-color);
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    bottom: 11px;
+    left: 24px;
+    border-radius: 50%;
+    transform: rotate(12deg);
+    z-index: 1;
+}
+
+    .monster__mouth::before {
+        content: "";
+        background-color: var(--p-color);
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: -18px;
+        left: -6px;
+        border-radius: 50%;
+    }
+
+.monster__leg {
+    background-color: var(--leg-color);
+    width: 20px;
+    height: 12px;
+    position: absolute;
+    bottom: -12px;
+    left: 20px;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 40px 0 var(--leg-color);
+}
+
+
 .ant-table-thead > tr > th {
     position: relative;
     color: rgba(0,0,0,.85);
@@ -80,19 +225,20 @@ a, .btn-link {
     transition: background .3s ease;
     color: #FFF !important;
 }
-
-.ant-table-column-sorters > span {
+/*.ant-table-tbody{
+    text-align:center !important;
+}*/
+.ant-table-column-sorters > span{
+    color: #FFF;
+}
+.ant-table-filter-trigger {
     color: #FFF !important;
 }
-
+.ant-table-filter-trigger.active {
+    color: #1890ff !important;
+}
 .ant-pagination-item, .ant-pagination-item-link {
     border-radius: 50% !important;
-    background: #17a2b8 !important;
-    color: #FFF !important;
-}
-
-.ant-table-column-sorter {
-    color: #FFF !important;
 }
 
 .ant-card-hoverable {
@@ -103,7 +249,7 @@ a, .btn-link {
     border: none !important;
 }
 
-.ant-input, .ant-select-selector,textarea {
+.ant-input, .ant-select-selector, textarea {
     border-left: 4px solid #3a0647 !important;
     border-right: 4px solid #3a0647 !important;
 }
@@ -115,18 +261,28 @@ a, .btn-link {
 .ant-card {
     border: 0px !important;
     box-shadow: 0 2px 6px 0 hsla(0,0%,0%,0.2) !important;
-    border-top: 4px solid #3a0647 !important;
+   
     border-top-right-radius: 20px !important;
     border-top-left-radius: 20px !important;
 }
-
+.ant-card-head-title {
+    text-align: center;
+    color: #fff;
+    background: #17a2b8;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
 .ant-form-item-control-input-content {
     display: grid !important;
 }
-
+.ant-modal-header {
+    text-align: center;
+    color: #fff !important; 
+    background: #17a2b8 !important;
+}
 .ant-modal-content {
     margin: auto !important;
-/*    border-left: 4px solid #52c41a !important;
+    /*    border-left: 4px solid #52c41a !important;
     border-right: 4px solid #52c41a !important;*/
 }
 
@@ -152,10 +308,12 @@ a, .btn-link {
         background-color: #b7eb8f !important;
         border: 1px solid #b7eb8f !important;
     }
+
 .ant-picker {
     border-left: 4px solid #3a0647 !important;
     border-right: 4px solid #3a0647 !important;
 }
+
 .ant-modal-footer .ant-btn-primary {
     display: none !important;
 }

@@ -1,8 +1,7 @@
 ﻿@page "/createemployee"
-@inject IEmployeeService EmployeeService
+@inject IEmployeeViewModel EmployeeViewModel
 @inject NavigationManager NavigationManager
-@inject IDepartmentService DepartmentService
-@inject ModalService _modalService
+@inject IDepartmentVeiwModel DepartmentVeiwModel
 
 <div class="mb-2">
     <Breadcrumb>
@@ -17,19 +16,26 @@
           OnFinish="HandleValidSubmit"
           Layout="vertical">
         <ObjectGraphDataAnnotationsValidator />
+
+        <Divider Orientation="center" Style="font-weight:bold">Personal Information</Divider>
         <FormItem Label="First Name">
             <Input @bind-Value="@context.FirstName" />
         </FormItem>
         <FormItem Label="Last Name">
             <Input @bind-Value="@context.LastName" />
         </FormItem>
+        <FormItem Label="Gender">
+            <EnumSelect TEnum="Gender" @bind-Value="@context.Gender" />
+        </FormItem>
+        <FormItem Label="Birth Date">
+            <DatePicker DefaultValue="DateTime.Today" @bind-Value="@context.DateOfBirth" />
+        </FormItem>
+        <Divider Orientation="center" Style="font-weight:bold">Contact Information</Divider>
         <FormItem Label="Email">
             <Input @bind-Value="@context.Email" />
         </FormItem>
-        <FormItem Label="Gender" >
-            <EnumSelect TEnum="Gender" @bind-Value="@context.Gender" />
-        </FormItem>
-        <FormItem Label="Department"  >
+        <Divider Orientation="center" Style="font-weight:bold">Other Information</Divider>
+        <FormItem Label="Department">
             <Select DataSource="@Departments"
                     Placeholder="Please Select Department ..."
                     DefaultActiveFirstOption="false"
@@ -37,11 +43,8 @@
                     LabelName="@nameof(Department.DepartmentName)"
                     @bind-Value="@context.DepartmentId"
                     EnableSearch
-                    AllowClear>                
+                    AllowClear>
             </Select>
-        </FormItem>
-        <FormItem Label="Birth Date">
-            <DatePicker DefaultValue="DateTime.Today" @bind-Value="@context.DateOfBirth"/>
         </FormItem>
         <FormItem Label="Image">
             <InputFile OnChange="OnFileChange" /> <Avatar Src="@context.PhotoPath"></Avatar>
@@ -67,7 +70,7 @@
         try
         {
             _loading = true;
-            Departments = (await DepartmentService.GetDepartments()).ToList();
+            Departments = (await DepartmentVeiwModel.GetDepartments()).ToList();
             _loading = false;
         }
         catch (Exception ex)
@@ -101,10 +104,10 @@
     {
         try
         {
-            var result = await EmployeeService.CreateEmployee(Employee);
+            var result = await EmployeeViewModel.CreateEmployee(Employee);
             if (result != null)
             {
-                HandleSuccess();
+                EmployeeViewModel.HandleSuccessCreate();
             }
         }
         catch (Exception ex)
@@ -114,21 +117,5 @@
         }
 
     }
-
-    private void HandleSuccess()
-    {
-        _modalService.Success(new ConfirmOptions()
-        {
-            Title = "Success.",
-            Content = "Employee Added Successfully.",
-            OnOk = OnOkClick
-        });
-        NavigationManager.NavigateTo("/employees");
-    }
-
-    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
-    {
-        await Task.Delay(1000);
-    };
 
 }

@@ -65,6 +65,17 @@ namespace Project.Client.Services
             return null;
         }
 
+        public async Task<IEnumerable<Employee>> Search(string name)
+        {
+            var Employee = await httpClient.GetAsync($"/api/Employees/search?name={name}");
+            if (Employee.IsSuccessStatusCode)
+            {
+                return await Employee.Content.ReadFromJsonAsync<IEnumerable<Employee>>();
+            }
+            await statusCodeService.HandleStatusCode(Employee);
+            return null;
+        }
+
         public async Task<Employee> UpdateEmployee(Employee updatedEmployee)
         {
             var Employee = await httpClient.PutAsJsonAsync<Employee>("/api/Employees", updatedEmployee);

@@ -16,25 +16,31 @@
 
 <Card Hoverable Title="Articals List">
 
-    <Table DataSource="Articals" PageSize="10" Class="table table-responsive" Loading="_loading">
-        <Column @bind-Field="@context.Title" Sortable></Column>
-        <Column @bind-Field="@context.Author"></Column>
-        <Column @bind-Field="@context.CategoryId" Title="Category">@context.Category.Name</Column>
-        <ActionColumn Title="Action">
-            <Space>
-                <SpaceItem>
-                    <a class="btn btn-info btn-flat m-1" href="@($"displayartical/{context.Id}")">
-                        <Icon Type="eye" Theme="outline" />
-                    </a>
-                    <a class="btn btn-success btn-flat m-1" href="@($"editartical/{context.Id}")">
-                        <Icon Type="edit" Theme="outline" />
-                    </a>
-                    <Button Danger OnClick="@(()=>{ _visible = true; _Id = context.Id; })">
-                        <Icon Type="delete" Theme="outline" />
-                    </Button>
-                </SpaceItem>
-            </Space>
-        </ActionColumn>
+    <Table DataSource="Articals" PageSize="10" Class="table table-responsive" Loading="_loading"
+           RowExpandable="@((artical)=>artical.Data.Title!="Not Expandable")">
+        <RowTemplate>
+            <Column @bind-Field="@context.Title" Sortable Ellipsis></Column>
+            <Column @bind-Field="@context.Author"></Column>
+            <Column @bind-Field="@context.CategoryId" Title="Category">@context.Category.Name</Column>
+            <ActionColumn Title="Action">
+                <Space>
+                    <SpaceItem>
+                        <a class="btn btn-info btn-flat m-1" href="@($"displayartical/{context.Id}")">
+                            <Icon Type="eye" Theme="outline" />
+                        </a>
+                        <a class="btn btn-success btn-flat m-1" href="@($"editartical/{context.Id}")">
+                            <Icon Type="edit" Theme="outline" />
+                        </a>
+                        <Button Danger OnClick="@(()=>{ _visible = true; _Id = context.Id; })">
+                            <Icon Type="delete" Theme="outline" />
+                        </Button>
+                    </SpaceItem>
+                </Space>
+            </ActionColumn>
+        </RowTemplate>
+        <ExpandTemplate>
+            @context.Data.Body
+        </ExpandTemplate>
     </Table>
 
 </Card>

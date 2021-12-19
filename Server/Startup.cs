@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Project.Server.Extensions;
 using Project.Server.Logging;
 using Project.Server.Models;
 using System.Linq;
@@ -27,20 +28,14 @@ namespace Project.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DbConnection")));
-            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<IArticalRepository, ArticalRepository>();
-            services.AddScoped<ILogRepository, LogRepository>();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("MyAllowSpecificOrigins",
-                        builder => {
-                            builder.WithOrigins("https://localhost:44345")
-                                      .AllowAnyHeader()
-                                      .AllowAnyMethod();
-                        });
-            });
+           
+
+            // ConfigureCors come from serviceExtensions class from Extensions folder.
+            // to make the startup class clean.
+            services.ConfigureCors();
+
+            services.ConfigureRepository();
+
             services.AddControllersWithViews();
             //services.AddControllersWithViews().AddJsonOptions(options =>
             //{
@@ -53,7 +48,8 @@ namespace Project.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env , ILoggerFactory loggerFactory)
         {
-            // get the applicationDbContext 
+            // get the applicationDbContext
+            // var applicationDbContext = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var serviceProvider = app.ApplicationServices.CreateScope().ServiceProvider;
             var applicationDbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
             // custom logging provider
