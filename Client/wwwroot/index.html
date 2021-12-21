@@ -29,6 +29,15 @@
     <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script src="jquery/jquery.min.js"></script>
     <script src="js/backend.js"></script>
+    <script>
+        function AddItem(btn) {
+            var table = document.getElementById("ExpTable");
+            var rows = table.getElementsByTagName('tr');
+            var rowOuterHtml = rows[rows.length - 1].outerHTML;
+            var newRow = table.insertRow();
+            newRow.innerHtml = rowOuterHtml;
+        }
+    </script>
 </body>
 
 </html>

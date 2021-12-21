@@ -1,0 +1,58 @@
+﻿@page "/createcustomer"
+@inject ICustomerViewModel CustomerViewModel
+@inject NavigationManager NavigationManager
+
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem Href="/customers">Customers</BreadcrumbItem>
+        <BreadcrumbItem>New</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<hr />
+<Card Hoverable Title="New Customer">
+    <Form Model="@Customer"
+          OnFinish="HandleValidSubmit"
+          Layout="vertical">
+        <ValidationSummary />
+        <FormItem Label="First Name">
+            <Input @bind-Value="@context.Name" />
+        </FormItem>
+        <FormItem Label="Email">
+            <Input @bind-Value="@context.Email" />
+        </FormItem>
+        <FormItem Label="Phone">
+            <Input @bind-Value="@context.Phone" />
+        </FormItem>
+        <FormItem>
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Create
+            </Button>
+        </FormItem>
+    </Form>
+</Card>
+@code{
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    public Customer Customer { get; set; } = new Customer();
+
+    protected async Task HandleValidSubmit()
+    {
+        try
+        {
+            var result = await CustomerViewModel.CreateCustomer(Customer);
+            if (result != null)
+            {
+                CustomerViewModel.HandleSuccessCreate();
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
+    }
+
+}

@@ -1,10 +1,10 @@
 ﻿@page "/displaypurchases/{id:int}"
 @inject IPurchasesViewModel PurchasesViewModel
+@inject IPurchaseDetailsViewModel PurchaseDetailsViewModel
 @inject NavigationManager NavigationManager
-@inject ICategoryService CategoryService
 @layout PrintLayout
 
-    <link href="css/bill.css" rel="stylesheet" />
+<link href="css/bill.css" rel="stylesheet" />
 <Card Loading="_loading" Style="background-color: #BBCCCB !important">
     <body style="background-color: #BBCCCB !important">
         <header class="clearfix">
@@ -26,16 +26,16 @@
         <section>
             <div class="details clearfix">
                 <div class="client left">
-                    <p class="name">Test</p>
+                    <p class="name">@Purchases.Customer.Name</p>
                     <p>
                         Sudan,<br>
                     </p>
-                    <a href="mailto:Test@gmail.com">Test@gmail.com</a>
+                    <a href="mailto:Test@gmail.com">@Purchases.Customer.Email</a>
                 </div>
                 <div class="data right">
-                    <div class="title">Bill - @Purchases.Id</div>
+                    <div class="title">Invoice  - @Purchases.Id</div>
                     <div class="date">
-                        Bill Date : @Purchases.Date.ToLongDateString()<br><br>
+                        Date : @Purchases.Date.ToLongDateString()<br><br>
                     </div>
                 </div>
             </div>
@@ -46,19 +46,32 @@
                             <tr>
                                 <th class="no"></th>
                                 <th class="desc"><div>Item</div></th>
-                                <th class="qty"><div>Category</div></th>
                                 <th class="unit"><div>Price</div></th>
                                 <th class="total"><div>Quantity</div></th>
                             </tr>
                         </tbody>
                         <tbody class="body">
-                            <tr>
-                                <td class="no">-</td>
-                                <td class="desc">@Purchases.ItemName</td>
-                                <td class="qty">@Purchases.Category.Name</td>
-                                <td class="unit">@Purchases.Price SDG</td>
-                                <td class="total">@Purchases.Quantaty</td>
-                            </tr>
+                            @if (PurchaseDetails == null)
+                            {
+
+                            }
+                            else
+                            {
+                                foreach (var item in PurchaseDetails)
+                                {
+                                    if (item.PurchasesId == Purchases.Id)
+                                    {
+                                        <tr>
+                                            <td class="no">-</td>
+                                            <td class="desc">@item.Item</td>
+                                            <td class="unit">@item.Price</td>
+                                            <td class="total">@item.Quantaty</td>
+                                        </tr>
+                                    }
+                                }
+
+                            }
+
                         </tbody>
                     </table>
                 </div>
@@ -66,7 +79,7 @@
                     <table class="grand-total">
                         <tbody>
                             <tr>
-                                <td class="grand-total" colspan="5"><div><span>Total: </span>@Purchases.Price.00 SDG</div></td>
+                                <td class="grand-total" colspan="5"><div><span>Total: </span>@Purchases.Total.00 SDG</div></td>
                             </tr>
                         </tbody>
                     </table>
@@ -76,12 +89,6 @@
 
         <footer>
             <div class="container">
-                <div class="notice">
-                    <div>Description:</div>
-                    <div>
-                        @Purchases.Description
-                    </div>
-                </div>
                 <div class="end">Invoice was created on a computer and is valid without the signature and seal.</div>
             </div>
         </footer>
@@ -98,6 +105,7 @@
     public List<Category> Categories { get; set; } = new List<Category>();
     public Category Category { get; set; } = new Category();
     public Purchases Purchases { get; set; } = new Purchases();
+    public List<PurchaseDetails> PurchaseDetails { get; set; } = new List<PurchaseDetails>();
     bool _loading;
 
     protected async override Task OnInitializedAsync()
@@ -106,7 +114,7 @@
         {
             _loading = true;
             Purchases = await PurchasesViewModel.GetPurchases(Id);
-            Categories = (await CategoryService.GetCategories()).ToList();
+            PurchaseDetails = (await PurchaseDetailsViewModel.GetPurchaseDetails()).ToList();
             _loading = false;
         }
         catch (Exception ex)

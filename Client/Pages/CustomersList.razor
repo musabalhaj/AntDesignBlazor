@@ -1,0 +1,93 @@
+﻿@page "/customers"
+@inject ICustomerViewModel CustomerViewModel
+@inject NavigationManager NavigationManager
+
+<Breadcrumb>
+    <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+    <BreadcrumbItem>Customers</BreadcrumbItem>
+</Breadcrumb>
+<Divider />
+
+
+<Button Type="@ButtonType.Primary" OnClick="@(() => NavigationManager.NavigateTo("createcustomer"))" Icon="plus">
+    New Customer
+</Button>
+
+<Card Hoverable Title="Customers List">
+
+    <Table DataSource="Customers" Size="TableSize.Small" Class="table table-responsive"
+           Loading="_loading"
+           Bordered PaginationPosition="bottomCenter">
+        <RowTemplate>
+            <Column @bind-Field="@context.Name" ></Column>
+            <Column @bind-Field="@context.Email"></Column>
+            <Column @bind-Field="@context.Phone"></Column>
+            <ActionColumn Title="Actions">
+                <Space>
+                    <SpaceItem>
+                        <Button Type="@ButtonType.Link" Icon="edit" Color="Color.Green5"
+                                OnClick="@(() => NavigationManager.NavigateTo($"editcustomer/{context.Id}"))">
+                        </Button>
+
+                        <Button Type="@ButtonType.Link" Icon="delete" Color="Color.Red5"
+                                OnClick="@(() => { _visible = true; _Id = context.Id; })">
+                        </Button>
+                    </SpaceItem>
+                </Space>
+            </ActionColumn>
+        </RowTemplate>
+    </Table>
+
+</Card>
+
+<Modal Title="@_title" Visible="@_visible" OnOk="@HandleOk" OnCancel="@HandleCancel" DestroyOnClose="true" OkType="danger">
+    Do you want to Delete This Customer?
+</Modal>
+
+@code{
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    bool _loading;
+    public List<Customer> Customers { get; set; } = new List<Customer>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _loading = true;
+            Customers = (await CustomerViewModel.GetCustomers()).ToList();
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+            Error.ProcessError(ex);
+        }
+
+    }
+
+    string _title = "Delete Confirmation";
+    bool _visible = false;
+    int _Id;
+
+    private async Task HandleOk(MouseEventArgs e)
+    {
+        try
+        {
+            await CustomerViewModel.DeleteCustomer(_Id);
+            Customers = (await CustomerViewModel.GetCustomers()).ToList();
+            _visible = false;
+            CustomerViewModel.HandleSuccessDelete();
+        }
+        catch (Exception ex)
+        {
+            Error.ProcessError(ex);
+        }
+
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        _visible = false;
+    }
+}

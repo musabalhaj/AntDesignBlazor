@@ -1,7 +1,8 @@
 ﻿@page "/purchases"
 @inject IPurchasesViewModel PurchasesViewModel
+@inject IPurchaseDetailsViewModel PurchaseDetailsViewModel
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime 
+@inject IJSRuntime JSRuntime
 
 <Breadcrumb>
     <BreadcrumbItem Href="/">Home</BreadcrumbItem>
@@ -10,9 +11,10 @@
 <Divider />
 
 
-<Button Type="@ButtonType.Primary" OnClick="@(() => NavigationManager.NavigateTo("createpurchases"))" Icon="plus">
+<Button Type="@ButtonType.Primary" OnClick="@(() => NavigationManager.NavigateTo(" createpurchases"))" Icon="plus">
     New Purchase
 </Button>
+
 
 <Card Hoverable Title="Purchases List">
 
@@ -20,40 +22,34 @@
            Bordered PaginationPosition="bottomCenter">
 
         <RowTemplate>
-            <Column @bind-Field="@context.ItemName" Filterable Sortable Fixed="left"></Column>
-            <Column @bind-Field="@context.CategoryId" Title="Category">@context.Category.Name</Column>
-            <Column @bind-Field="@context.Price"></Column>
-            <Column @bind-Field="@context.Quantaty"></Column>
+            <Column @bind-Field="@context.Id" Title="Bill">BILL-@context.Id</Column>
+            <Column @bind-Field="@context.CustomerId" Title="Customer">@context.Customer.Name</Column>
             <Column @bind-Field="@context.Date" TData="DateTime" Format="dd/MM/yyy" Filterable>
                 @context.Date.ToLongDateString()
             </Column>
+            <Column @bind-Field="@context.Total">@context.Total SDG</Column>
             <ActionColumn Title="Actions">
                 <Space>
                     <SpaceItem>
                         <Button Type="@ButtonType.Link" Icon="eye" Color="Color.Blue5"
                                 OnClick="@(() => display(context.Id))">
                         </Button>
-
-                        @*<Button Type="@ButtonType.Link" Icon="edit" Color="Color.Green5"
+                        <Button Type="@ButtonType.Link" Icon="edit" Color="Color.Green5"
                                 OnClick="@(() => NavigationManager.NavigateTo($"editpurchases/{context.Id}"))">
                         </Button>
-
-                        <Button Type="@ButtonType.Link" Icon="delete" Color="Color.Red5"
-                                OnClick="@(() => { _visible = true; _Id = context.Id; })">
-                        </Button>*@
+                        <Button Danger OnClick="@(()=>{ _visible = true; _Id = context.Id; })">
+                            <Icon Type="delete" Theme="outline" />
+                        </Button>
                     </SpaceItem>
                 </Space>
             </ActionColumn>
         </RowTemplate>
-        <ExpandTemplate>
-            Description :  @context.Data.Description
-        </ExpandTemplate>
     </Table>
 
 </Card>
 
 <Modal Title="@_title" Visible="@_visible" OnOk="@HandleOk" OnCancel="@HandleCancel" DestroyOnClose="true" OkType="danger">
-    Do you want to Delete This Purchases?
+    Do you want to Delete This Purchase?
 </Modal>
 
 @code{
@@ -97,6 +93,7 @@
         }
 
     }
+
 
     private void HandleCancel(MouseEventArgs e)
     {

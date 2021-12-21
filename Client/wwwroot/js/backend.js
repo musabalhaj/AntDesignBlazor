@@ -9,3 +9,10 @@ $(document).ready(function($) {
 	}
 });
 
+function AddItem(btn) {
+    var table = document.getElementById("ExpTable");
+    var rows = table.getElementsByTagName('tr');
+    var rowOuterHtml = rows[rows.length - 1].outerHTML;
+    var newRow = table.insertRow();
+    newRow.innerHtml = rowOuterHtml;
+}

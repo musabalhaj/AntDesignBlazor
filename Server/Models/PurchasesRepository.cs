@@ -37,16 +37,14 @@ namespace Project.Server.Models
 
         public async Task<Purchases> GetPurchases(int purchaseId)
         {
-            return await context.Purchases
-                .Include(e => e.Category)
+            return await context.Purchases.Include(p=>p.Customer)
                 .FirstOrDefaultAsync(e => e.Id == purchaseId);
 
         }
 
         public async Task<IEnumerable<Purchases>> GetPurchases()
         {
-            return await context.Purchases
-                .Include(e => e.Category)
+            return await context.Purchases.Include(p => p.Customer)
                 .OrderByDescending(e => e.Id)
                 .ToListAsync();
         }
@@ -58,12 +56,9 @@ namespace Project.Server.Models
             var result = await context.Purchases.FirstOrDefaultAsync(e => e.Id == purchase.Id);
             if (result != null)
             {
-                result.ItemName = purchase.ItemName;
-                result.Description = purchase.Description;
-                result.Price = purchase.Price;
-                result.Quantaty = purchase.Quantaty;
                 result.Date = purchase.Date;
-                result.CategoryId = purchase.CategoryId;
+                result.Total = purchase.Total;
+                result.CustomerId = purchase.CustomerId;
                 await context.SaveChangesAsync();
                 return result;
             }

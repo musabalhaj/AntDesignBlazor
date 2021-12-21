@@ -1,47 +1,105 @@
 ﻿@page "/createpurchases"
 @inject IPurchasesViewModel PurchasesViewModel
+@inject ICustomerViewModel CustomerViewModel
+@inject IItemService ItemService
+@inject IPurchaseDetailsViewModel PurchaseDetailsViewModel
+@inject ModalService modalService
 @inject NavigationManager NavigationManager
-@inject ICategoryService CategoryService
 
-<div class="mb-2">
-    <Breadcrumb>
-        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem Href="/purchases">Purchases</BreadcrumbItem>
-        <BreadcrumbItem>New</BreadcrumbItem>
-    </Breadcrumb>
-</div>
-<hr />
-<Card Hoverable Title="New Purchases" Loading="_loading">
-    <Form Model="@Purchases"
+<Breadcrumb>
+    <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+    <BreadcrumbItem Href="/purchases">Purchases</BreadcrumbItem>
+    <BreadcrumbItem>New</BreadcrumbItem>
+</Breadcrumb>
+<Divider />
+
+
+<Card Hoverable Title="New Purchase" Loading="_loading">
+    <Form Model="@Purchase"
           OnFinish="HandleValidSubmit"
           Layout="vertical">
         <ValidationSummary />
-        <FormItem Label="Item Name">
-            <Input @bind-Value="@context.ItemName" />
-        </FormItem>
-        <FormItem Label="Description">
-            <InputTextArea @bind-Value="@context.Description" />
-        </FormItem>
-        <FormItem Label="Price">
-            <Input @bind-Value="@context.Price" />
-        </FormItem>
-        <FormItem Label="Quantaty">
-            <Input @bind-Value="@context.Quantaty" />
-        </FormItem>
         <FormItem Label="Date">
             <DatePicker DefaultValue="DateTime.Today" @bind-Value="@context.Date" />
         </FormItem>
-        <FormItem Label="Category">
-            <Select DataSource="@Categories"
-                    Placeholder="Please Select Category ..."
+        <FormItem Label="Customer" Required>
+            <Select DataSource="@Customers"
+                    Placeholder="Please Select Customer ..."
                     DefaultActiveFirstOption="false"
-                    ValueName="@nameof(Category.Id)"
-                    LabelName="@nameof(Category.Name)"
-                    @bind-Value="@context.CategoryId"
+                    ValueName="@nameof(Customer.Id)"
+                    LabelName="@nameof(Customer.Name)"
+                    @bind-Value="@context.CustomerId"
                     EnableSearch
                     AllowClear>
             </Select>
         </FormItem>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr class="bg-primary">
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th>
+                        <Select DataSource="@Items"
+                                Placeholder="Select Item ..."
+                                DefaultActiveFirstOption="false"
+                                ValueName="@nameof(Item.Id)"
+                                LabelName="@nameof(Item.Name)"
+                                @bind-Value="@itemId"
+                                EnableSearch
+                                AllowClear
+                                OnSelectedItemChanged="(value=>GetPrice(value))">
+                        </Select>
+                    </th>
+                    <th>
+                        <Input @bind-Value="@purchas.Price" Disabled="true" />
+                    </th>
+                    <th>
+                        <Input @bind-Value="@purchas.Quantaty" />
+                    </th>
+                    <th>
+                        <Button Type="@ButtonType.Primary" Icon="plus" @onclick="AddPurchaseItem"></Button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (PurchaseDetails.Count == 0)
+                {
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Total = 0.00 SDG</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in PurchaseDetails)
+                    {
+                        <tr>
+                            <td>@item.Item</td>
+                            <td>@item.Quantaty</td>
+                            <td>@item.Price</td>
+                            <td>
+                                <Button Danger Icon="delete" @onclick="@(()=>DeletePurchaseItem(item))"></Button>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Total = @context.Total.00 SDG</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
         <FormItem>
             <Button Type="@ButtonType.Primary" HtmlType="submit">
                 Create
@@ -49,21 +107,31 @@
         </FormItem>
     </Form>
 </Card>
+
+
+
+
 @code{
+
     [CascadingParameter]
     public Error Error { get; set; }
 
-    public List<Category> Categories { get; set; } = new List<Category>();
-    public Category Category { get; set; } = new Category();
-    public Purchases Purchases { get; set; } = new Purchases();
-    bool _loading;
 
+    public List<Customer> Customers { get; set; } = new List<Customer>();
+    public Customer Customer { get; set; } = new Customer();
+
+    public List<Item> Items { get; set; } = new List<Item>();
+    public Item Item { get; set; } = new Item();
+    public int itemId { get; set; }
+    public Purchases Purchase { get; set; } = new Purchases();
+    bool _loading;
     protected async override Task OnInitializedAsync()
     {
         try
         {
             _loading = true;
-            Categories = (await CategoryService.GetCategories()).ToList();
+            Customers = (await CustomerViewModel.GetCustomers()).ToList();
+            Items = (await ItemService.GetItems()).ToList();
             _loading = false;
         }
         catch (Exception ex)
@@ -74,14 +142,66 @@
 
     }
 
+    public void GetPrice(Item item)
+    {
+        purchas.Price = item.Price;
+    }
+
+    private List<PurchaseDetails> PurchaseDetails = new List<PurchaseDetails>();
+    private PurchaseDetails purchas { get; set; } = new PurchaseDetails();
+    private async Task AddPurchaseItem()
+    {
+        var itemName = await ItemService.GetItem(itemId);
+        purchas.Item = itemName.Name;
+
+        var itemtoAdd = PurchaseDetails.Where(e => e.Item.Contains(purchas.Item));
+        if (itemtoAdd.Any())
+        {
+            HandleInvalidAdd();
+        }
+        else
+        {
+            PurchaseDetails.Add(purchas);
+            Purchase.Total = Purchase.Total + (int.Parse(purchas.Price) * int.Parse(purchas.Quantaty));
+            purchas = new PurchaseDetails();
+        }
+    }
+
+    public void HandleInvalidAdd()
+    {
+        modalService.Error(new ConfirmOptions()
+        {
+            Title = "Error.",
+            Content = "This Item Is Selected.",
+        });
+        purchas = new PurchaseDetails();
+    }
+
+    private void DeletePurchaseItem(PurchaseDetails item)
+    {
+        if (PurchaseDetails.Count != 0)
+        {
+            Purchase.Total = Purchase.Total - (int.Parse(item.Price) * int.Parse(item.Quantaty));
+        }
+        else
+        {
+            Purchase.Total = 0;
+        }
+        PurchaseDetails.Remove(item);
+    }
 
     protected async Task HandleValidSubmit()
     {
         try
         {
-            var result = await PurchasesViewModel.CreatePurchases(Purchases);
+            var result = await PurchasesViewModel.CreatePurchases(Purchase);
             if (result != null)
             {
+                foreach (var Details in PurchaseDetails)
+                {
+                    Details.PurchasesId = result.Id;
+                    await PurchaseDetailsViewModel.CreatePurchaseDetails(Details);
+                }
                 PurchasesViewModel.HandleSuccessCreate();
             }
         }

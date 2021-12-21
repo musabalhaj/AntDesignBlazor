@@ -24,12 +24,12 @@ namespace Project.Server.Extensions
 
         public static void ConfigureRepository(this IServiceCollection services)
         {
-            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<IArticalRepository, ArticalRepository>();
+            services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ILogRepository, LogRepository>();
             services.AddScoped<IPurchasesRepository, PurchasesRepository>();
+            services.AddScoped<IPurchaseDetailsRepository, PurchaseDetailsRepository>();
         }
     }
 

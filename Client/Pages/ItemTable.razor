@@ -1,0 +1,70 @@
+﻿@page "/itemtable"
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<table  class="table table-bordered">
+    <thead>
+        <tr class="bg-primary">
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+        <tr>
+            <th>
+                <input required type="text" @bind-value="@Item.Item" />
+            </th>
+            <th>
+                <input required type="text" @bind-value="@Item.Quantaty" />
+            </th>
+            <th>
+                <input required type="text" @bind-value="@Item.Price" />
+            </th>
+
+            <th>
+                <button @onclick="AddPurchaseItem" type="button" class="btn btn-primary btn-sm visible">Add</button>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (PurchaseDetails == null)
+        {
+            <tr>
+                <td></td>
+                <td>No Thing</td>
+                <td></td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in PurchaseDetails)
+            {
+                <tr>
+                    <td>@item.Item</td>
+                    <td>@item.Quantaty</td>
+                    <td>@item.Price</td>
+                    <td>
+                        <button @onclick="@(()=>DeletePurchaseItem(item))" id="=btndelete" type="button" class="btn btn-danger btn-sm">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code{
+    private List<PurchaseDetails> PurchaseDetails = new List<PurchaseDetails>();
+    private PurchaseDetails Item { get; set; } = new PurchaseDetails();
+    private void AddPurchaseItem()
+    {
+        PurchaseDetails.Add(Item);
+        Item = new PurchaseDetails();
+    }
+
+    private void DeletePurchaseItem(PurchaseDetails item)
+    {
+        PurchaseDetails.Remove(item);
+    }
+
+}

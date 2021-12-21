@@ -21,12 +21,8 @@ namespace Project.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
-            builder.Services.AddHttpClient<IDepartmentVeiwModel, DepartmentVeiwModel>(client =>
-            {
-                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-            });
 
-            builder.Services.AddHttpClient<IEmployeeViewModel, EmployeeViewModel>(client =>
+            builder.Services.AddHttpClient<ICustomerViewModel, CustomerViewModel>(client =>
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
             });
@@ -36,7 +32,7 @@ namespace Project.Client
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
             });
 
-            builder.Services.AddHttpClient<IArticalService, ArticalService>(client =>
+            builder.Services.AddHttpClient<IItemService, ItemService>(client =>
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
             });
@@ -51,7 +47,10 @@ namespace Project.Client
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
             });
 
-            builder.Services.AddScoped<IPrintingService, PrintingService>();
+            builder.Services.AddHttpClient<IPurchaseDetailsViewModel, PurchaseDetailsViewModel>(client =>
+            {
+                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            });
 
             builder.Services.AddSingleton<StatusCodeService>();
 

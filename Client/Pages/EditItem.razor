@@ -1,0 +1,112 @@
+﻿@page "/edititem/{id:int}"
+@inject IItemService ItemService
+@inject NavigationManager NavigationManager
+@inject ICategoryService CategoryService
+@inject ModalService _modalService
+
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem Href="/items">Items</BreadcrumbItem>
+        <BreadcrumbItem>Edit</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<hr /> 
+<Card Hoverable Title="Edit Item" Loading="_loading">
+    <Form Model="@Item"
+          OnFinish="HandleValidSubmit"
+          Layout="vertical">
+        <ValidationSummary />
+        <FormItem Label="Name">
+            <Input @bind-Value="@context.Name" />
+        </FormItem>
+        <FormItem Label="Description">
+            <InputTextArea @bind-Value="@context.Description" />
+        </FormItem>
+        <FormItem Label="Price">
+            <Input @bind-Value="@context.Price" />
+        </FormItem>
+        <FormItem Label="Quantaty">
+            <Input @bind-Value="@context.Quantaty" />
+        </FormItem>
+        <FormItem Label="Category" Required>
+            <Select DataSource="@Categories"
+                    DefaultActiveFirstOption="false"
+                    ValueName="@nameof(Category.Id)"
+                    LabelName="@nameof(Category.Name)"
+                    @bind-Value="@context.CategoryId"
+                    EnableSearch
+                    AllowClear>
+            </Select>
+        </FormItem>
+        <FormItem>
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Update
+            </Button>
+        </FormItem>
+    </Form>
+</Card>
+
+@code{
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    public List<Category> Categories { get; set; } = new List<Category>();
+    public Category Category { get; set; } = new Category();
+    public Item Item { get; set; } = new Item();
+    bool _loading;
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            _loading = true;
+            Item = await ItemService.GetItem(Id);
+            Categories = (await CategoryService.GetCategories()).ToList();
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
+    }
+
+    protected async Task HandleValidSubmit()
+    {
+        try
+        {
+            var result = await ItemService.UpdateItem(Item);
+            if (result != null)
+            {
+                HandleSuccess();
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
+    }
+
+    private void HandleSuccess()
+    {
+        _modalService.Success(new ConfirmOptions()
+        {
+            Title = "Success.",
+            Content = "Item Updated Successfully.",
+            OnOk = OnOkClick
+        });
+        NavigationManager.NavigateTo("/items");
+    }
+
+    private Func<ModalClosingEventArgs, Task> OnOkClick = async (e) =>
+    {
+        await Task.Delay(1000);
+    };
+}

@@ -1,0 +1,78 @@
+﻿@page "/editcustomer/{id:int}"
+@inject ICustomerViewModel CustomerViewModel
+@inject NavigationManager NavigationManager
+
+<div class="mb-2">
+    <Breadcrumb>
+        <BreadcrumbItem Href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem Href="/customers">Customers</BreadcrumbItem>
+        <BreadcrumbItem>Edit</BreadcrumbItem>
+    </Breadcrumb>
+</div>
+<hr />
+<Card Hoverable Title="Edit Customer" Loading="_loading">
+    <Form Model="@Customer"
+          OnFinish="HandleValidSubmit"
+          Layout="vertical">
+        <ValidationSummary />
+        <FormItem Label="First Name">
+            <Input @bind-Value="@context.Name" />
+        </FormItem>
+        <FormItem Label="Email">
+            <Input @bind-Value="@context.Email" />
+        </FormItem>
+        <FormItem Label="Phone">
+            <Input @bind-Value="@context.Phone" />
+        </FormItem>
+        <FormItem>
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Update
+            </Button>
+        </FormItem>
+    </Form>
+</Card>
+
+@code{
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+    public Customer Customer { get; set; } = new Customer();
+    bool _loading;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        try
+        {
+            _loading = true;
+            Customer = await CustomerViewModel.GetCustomer(Id);
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+    }
+
+
+    protected async Task HandleValidSubmit()
+    {
+        try
+        {
+            var result = await CustomerViewModel.UpdateCustomer(Customer);
+            if (result != null)
+            {
+                CustomerViewModel.HandleSuccessUpdate();
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Error.ProcessError(ex);
+        }
+
+    }
+
+}

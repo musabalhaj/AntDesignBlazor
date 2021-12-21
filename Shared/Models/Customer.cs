@@ -8,19 +8,17 @@ using System.Threading.Tasks;
 
 namespace Project.Shared.Models
 {
-    public class Purchases
+    public class Customer
     {
         public int Id { get; set; }
         [Required]
-        public DateTime Date { get; set; }
-
-        public double Total { get; set; }
-
+        [MinLength(2)]
+        public string Name { get; set; }
         [Required]
-        [Display(Name = "Customer")]
-        [SelectValidation(SelectName = "Customer")]
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
-
+        [EmailAddress]
+        [EmailDomainValidation(AllowedDomain = "gmail.com")]
+        public string Email { get; set; }
+        [Required]
+        public string Phone { get; set; }
     }
 }

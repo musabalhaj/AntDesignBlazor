@@ -12,23 +12,15 @@ namespace Project.Client.ViewModels
     {
         public int Id { get; set; }
         [Required]
-        [MinLength(2)]
-        [Display(Name = "Item Name")]
-        public string ItemName { get; set; }
-        [Required]
-        [MinLength(2)]
-        public string Description { get; set; }
-        [Required]
-        public string Price { get; set; }
-        [Required]
-        public string Quantaty { get; set; }
-        [Required]
         public DateTime Date { get; set; }
+
+        public double Total { get; set; }
+
         [Required]
-        [Display(Name = "Category")]
-        [SelectValidation(SelectName = "Cateogry")]
-        public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        [Display(Name = "Customer")]
+        [SelectValidation(SelectName = "Customer")]
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
 
         public List<Purchases> Purchases { get; set; }
 

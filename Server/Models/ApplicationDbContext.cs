@@ -14,119 +14,93 @@ namespace Project.Server.Models
 
         }
 
-        public DbSet<Department> Departments { get; set; }
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Artical> Articals { get; set; }
-        public DbSet<Log> Logs { get; set; }
+        public DbSet<Item> Items { get; set; }
         public DbSet<Purchases> Purchases { get; set; }
 
+        public DbSet<PurchaseDetails> PurchaseDetails { get; set; }
+
+        public DbSet<Log> Logs { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Department>().HasData(new Department { DepartmentId = 1, DepartmentName = "Department 1" });
-            modelBuilder.Entity<Department>().HasData(new Department { DepartmentId = 2, DepartmentName = "Department 2" });
-            modelBuilder.Entity<Department>().HasData(new Department { DepartmentId = 3, DepartmentName = "Department 3" });
-            modelBuilder.Entity<Department>().HasData(new Department { DepartmentId = 4, DepartmentName = "Department 4" });
 
             modelBuilder.Entity<Category>().HasData(new Category { Id = 1, Name = "Category 1" });
             modelBuilder.Entity<Category>().HasData(new Category { Id = 2, Name = "Category 2" });
             modelBuilder.Entity<Category>().HasData(new Category { Id = 3, Name = "Category 3" });
             modelBuilder.Entity<Category>().HasData(new Category { Id = 4, Name = "Category 4" });
 
-            modelBuilder.Entity<Employee>().HasData(new Employee
-            {
-                EmployeeId = 1,
-                FirstName = "John",
-                LastName = "Doe",
-                Email = "JohnDoe@gmail.com",
-                DateOfBirth = new DateTime(1980, 10, 24),
-                Gender = Gender.Male,
-                DepartmentId = 1,
-                PhotoPath = "images/user2.jpg"
-            });
-            modelBuilder.Entity<Employee>().HasData(new Employee
-            {
-                EmployeeId = 2,
-                FirstName = "Nina",
-                LastName = "Mcintire",
-                Email = "Mcintire@gmail.com",
-                DateOfBirth = new DateTime(1980, 10, 24),
-                Gender = Gender.Female,
-                DepartmentId = 2,
-                PhotoPath = "images/user1.jpg"
-            });
-            modelBuilder.Entity<Employee>().HasData(new Employee
-            {
-                EmployeeId = 3,
-                FirstName = "Musab",
-                LastName = "Marly",
-                Email = "musab1marly@gmail.com",
-                DateOfBirth = new DateTime(1997, 1, 23),
-                Gender = Gender.Male,
-                DepartmentId = 3,
-                PhotoPath = "images/user4.jpg"
-            });
-            modelBuilder.Entity<Employee>().HasData(new Employee
-            {
-                EmployeeId = 4,
-                FirstName = "Sarah",
-                LastName = "Ross",
-                Email = "Sarah@gmail.com",
-                DateOfBirth = new DateTime(1999, 10, 23),
-                Gender = Gender.Female,
-                DepartmentId = 4,
-                PhotoPath = "images/user3.jpg"
-            });
-
-            modelBuilder.Entity<Artical>().HasData(new Artical
+            modelBuilder.Entity<Customer>().HasData(new Customer
             {
                 Id = 1,
-                Author = "John Doe",
-                Title = "Lorem ipsum represents a long-held tradition for designers",
-                Body = "Lorem ipsum represents a long-held tradition for designers," +
-                " typographers and the like. Some people hate it and argue for its demise," +
-                " but others ignore the hate as they create awesome tools to help create filler " +
-                "text for everyone from bacon lovers to Charlie Sheen fans.",
-                Image = "images/Artical1.jpg",
-                CategoryId = 1
+                Name = "John Doe",
+                Email = "JohnDoe@gmail.com",
+                Phone = "0995514212"
             });
-            modelBuilder.Entity<Artical>().HasData(new Artical
+            modelBuilder.Entity<Customer>().HasData(new Customer
             {
                 Id = 2,
-                Author = "Adam Jones",
-                Title = "Lorem ipsum represents a long-held tradition for designers",
-                Body = "Lorem ipsum represents a long-held tradition for designers," +
-                " typographers and the like. Some people hate it and argue for its demise," +
-                " but others ignore the hate as they create awesome tools to help create filler " +
-                "text for everyone from bacon lovers to Charlie Sheen fans.",
-                Image = "images/Artical2.jpg",
-                CategoryId = 2
+                Name = "Sara Doe",
+                Email = "saraDoe@gmail.com",
+                Phone = "0951245681"
             });
-            modelBuilder.Entity<Artical>().HasData(new Artical
+            modelBuilder.Entity<Customer>().HasData(new Customer
             {
                 Id = 3,
-                Author = "Jonathan Burke Jr.",
-                Title = "Lorem ipsum represents a long-held tradition for designers",
-                Body = "Lorem ipsum represents a long-held tradition for designers," +
+                Name = "Fofo Doe",
+                Email = "FofoDoe@gmail.com",
+                Phone = "0124587452"
+            });
+
+            modelBuilder.Entity<Item>().HasData(new Item
+            {
+                Id = 1,
+                Name = "Item 1",
+                Description = "Lorem ipsum represents a long-held tradition for designers," +
                 " typographers and the like. Some people hate it and argue for its demise," +
                 " but others ignore the hate as they create awesome tools to help create filler " +
                 "text for everyone from bacon lovers to Charlie Sheen fans.",
-                Image = "images/Artical3.jpg",
+                Price = "90",
+                Quantaty = "100",
+                CategoryId = 1
+            });
+            modelBuilder.Entity<Item>().HasData(new Item
+            {
+                Id = 2,
+                Name = "Item 2",
+                Description = "Lorem ipsum represents a long-held tradition for designers," +
+                " typographers and the like. Some people hate it and argue for its demise," +
+                " but others ignore the hate as they create awesome tools to help create filler " +
+                "text for everyone from bacon lovers to Charlie Sheen fans.",
+                Price = "150",
+                Quantaty = "1000",
+                CategoryId = 2
+            });
+            modelBuilder.Entity<Item>().HasData(new Item
+            {
+                Id = 3,
+                Name = "Item 3",
+                Description = "Lorem ipsum represents a long-held tradition for designers," +
+                " typographers and the like. Some people hate it and argue for its demise," +
+                " but others ignore the hate as they create awesome tools to help create filler " +
+                "text for everyone from bacon lovers to Charlie Sheen fans.",
+                Price = "100",
+                Quantaty = "100",
                 CategoryId = 3
             });
-            modelBuilder.Entity<Artical>().HasData(new Artical
+            modelBuilder.Entity<Item>().HasData(new Item
             {
                 Id = 4,
-                Author = "Jay White",
-                Title = "Lorem ipsum represents a long-held tradition for designers",
-                Body = "Lorem ipsum represents a long-held tradition for designers," +
+                Name = "Item 4",
+                Description = "Lorem ipsum represents a long-held tradition for designers," +
                 " typographers and the like. Some people hate it and argue for its demise," +
                 " but others ignore the hate as they create awesome tools to help create filler " +
                 "text for everyone from bacon lovers to Charlie Sheen fans.",
-                Image = "images/Artical4.jpg",
+                Price = "1500",
+                Quantaty = "100",
                 CategoryId = 4
             });
         }

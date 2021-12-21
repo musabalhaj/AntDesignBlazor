@@ -17,23 +17,15 @@ namespace Project.Client.ViewModels
     {
         public int Id { get; set; }
         [Required]
-        [MinLength(2)]
-        [Display(Name = "Item Name")]
-        public string ItemName { get; set; }
-        [Required]
-        [MinLength(2)]
-        public string Description { get; set; }
-        [Required]
-        public string Price { get; set; }
-        [Required]
-        public string Quantaty { get; set; }
-        [Required]
         public DateTime Date { get; set; }
+
+        public double Total { get; set; }
+
         [Required]
-        [Display(Name = "Category")]
-        [SelectValidation(SelectName = "Cateogry")]
-        public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        [Display(Name = "Customer")]
+        [SelectValidation(SelectName = "Customer")]
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
 
         public PurchasesViewModel() { }
 
@@ -146,13 +138,10 @@ namespace Project.Client.ViewModels
             return new PurchasesViewModel
             {
                 Id = purchases.Id,
-                ItemName = purchases.ItemName,
-                Description = purchases.Description,
-                Price = purchases.Price,
-                Quantaty = purchases.Quantaty,
                 Date = purchases.Date,
-                CategoryId = purchases.CategoryId,
-                Category = purchases.Category,
+                Total = purchases.Total,
+                CustomerId = purchases.CustomerId,
+                Customer = purchases.Customer,
 
             };
         }
@@ -162,13 +151,10 @@ namespace Project.Client.ViewModels
             return new Purchases
             {
                 Id = purchasesVeiwModel.Id,
-                ItemName = purchasesVeiwModel.ItemName,
-                Description = purchasesVeiwModel.Description,
-                Price = purchasesVeiwModel.Price,
-                Quantaty = purchasesVeiwModel.Quantaty,
                 Date = purchasesVeiwModel.Date,
-                CategoryId = purchasesVeiwModel.CategoryId,
-                Category = purchasesVeiwModel.Category,
+                Total = purchasesVeiwModel.Total,
+                CustomerId = purchasesVeiwModel.CustomerId,
+                Customer = purchasesVeiwModel.Customer,
             };
         }
 
